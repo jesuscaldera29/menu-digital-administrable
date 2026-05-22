@@ -866,3 +866,27 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
 
+
+// ==========================================
+// PWA INSTALL LOGIC
+// ==========================================
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('btnInstallApp');
+  if(btn) {
+    btn.classList.remove('hidden');
+    btn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('App instalada');
+      }
+      deferredPrompt = null;
+      btn.classList.add('hidden');
+    });
+  }
+});
+

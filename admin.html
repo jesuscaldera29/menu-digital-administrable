@@ -6,6 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Panel Admin - Menú Digital</title>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff5f6d">
+  <link rel="apple-touch-icon" href="https://ui-avatars.com/api/?name=MP&background=ff5f6d&color=fff&size=192">
 
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -228,6 +232,7 @@
       </nav>
 
       <div class="flex items-center gap-2">
+        <button id="btnInstallApp" class="hidden bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg hover:scale-105 transition-all">📱 Instalar App</button>
         <a href="index.html"
           class="bg-white text-black px-6 py-2 rounded-xl font-black text-sm shadow-lg active:scale-95 transition-all">📱
           Menú</a>
@@ -661,6 +666,18 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <script src="js/supabase-config.js?v=3"></script>
   <script src="js/admin.js?v=3"></script>
+  <script>
+    // Registrar Service Worker para PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('Service Worker registrado', reg);
+        }).catch(err => {
+          console.warn('Error al registrar Service Worker', err);
+        });
+      });
+    }
+  </script>
 </body>
 
 </html>
