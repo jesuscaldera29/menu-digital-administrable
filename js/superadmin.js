@@ -35,6 +35,13 @@ async function initSuperAdmin() {
   if (userEmail.toLowerCase() !== SUPER_ADMIN_EMAIL.toLowerCase()) {
     document.getElementById('accessDenied').classList.remove('hidden');
     document.getElementById('superAdminPanel').classList.add('hidden');
+    
+    // MOSTRAR EL ERROR EN PANTALLA
+    const errP = document.createElement('p');
+    errP.className = "text-yellow-400 mt-4 font-bold text-sm bg-black/50 p-4 rounded-xl";
+    errP.innerHTML = `⚠️ Diagnóstico:<br>Iniciaste sesión con: <b>${userEmail}</b><br>El superadmin es: <b>${SUPER_ADMIN_EMAIL}</b>`;
+    document.getElementById('accessDenied').appendChild(errP);
+    
     console.warn('Acceso denegado: el correo no coincide con SUPER_ADMIN_EMAIL');
     return;
   }
