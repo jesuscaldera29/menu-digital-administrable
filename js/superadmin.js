@@ -134,10 +134,42 @@ function renderBusinesses() {
           </div>
         </td>
         <td>${statusHtml}</td>
-        <td>${actionBtn}</td>
+        <td>
+          <div class="flex gap-2">
+            ${actionBtn}
+            <button onclick="deleteBusiness('${b.id}', '${b.business_name}')" class="px-3 py-1 bg-red-900/50 text-red-400 border border-red-900 rounded-lg text-sm hover:bg-red-600 hover:text-white transition-all">🗑️ Eliminar</button>
+          </div>
+        </td>
       </tr>
     `;
   }).join('');
+}
+
+async function deleteBusiness(businessId, businessName) {
+  const confirmMsg = `⚠️ ADVERTENCIA DE SEGURIDAD ⚠️\n\n¿Estás absolutamente seguro de que quieres ELIMINAR el restaurante "${businessName}"?\n\nEsta acción borrará TODOS sus productos, configuraciones, clientes y pedidos de forma IRREVERSIBLE.`;
+  
+  if (!confirm(confirmMsg)) return;
+
+  const doubleCheck = prompt(`Para confirmar la eliminación, escribe el nombre del restaurante exacto: ${businessName}`);
+  if (doubleCheck !== businessName) {
+    showToast('❌ Eliminación cancelada. El nombre no coincide.');
+    return;
+  }
+
+  try {
+    const { error } = await supabaseClient
+      .from('businesses')
+      .delete()
+      .eq('id', businessId);
+
+    if (error) throw error;
+
+    showToast('✅ Restaurante y todos sus datos eliminados.');
+    await loadBusinesses(); // recargar
+  } catch (err) {
+    console.error(err);
+    showToast('❌ Error al eliminar: ' + err.message);
+  }
 }
 
 async function toggleStatus(businessId, newStatus) {
