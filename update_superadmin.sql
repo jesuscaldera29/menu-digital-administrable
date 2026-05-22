@@ -12,8 +12,8 @@ DROP POLICY IF EXISTS "super_admin_all_businesses" ON businesses;
 
 CREATE POLICY "super_admin_all_businesses" ON businesses 
   FOR ALL 
-  USING (auth.jwt() ->> 'email' = 'TU_CORREO_ADMIN_AQUI@gmail.com')
-  WITH CHECK (auth.jwt() ->> 'email' = 'TU_CORREO_ADMIN_AQUI@gmail.com');
+  USING (auth.jwt() ->> 'email' = 'jesuscaldera2000@gmail.com')
+  WITH CHECK (auth.jwt() ->> 'email' = 'jesuscaldera2000@gmail.com');
 
 -- 3. Crear una vista para facilitar la carga de datos en el Super Admin (negocios + sus settings base)
 CREATE OR REPLACE VIEW superadmin_businesses_view AS

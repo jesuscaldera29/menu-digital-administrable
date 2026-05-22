@@ -163,5 +163,76 @@ async function toggleStatus(businessId, newStatus) {
   }
 }
 
+// ==========================================
+// LÓGICA PARA CREAR NUEVO CLIENTE (MODAL)
+// ==========================================
+
+// Cliente secundario de Supabase que NO guarda sesión, para no cerrar la sesión del admin.
+const supabaseAdminAuth = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+  }
+});
+
+function openClientModal() {
+  document.getElementById('clientModal').classList.remove('hidden');
+}
+
+function closeClientModal() {
+  document.getElementById('clientModal').classList.add('hidden');
+  document.getElementById('createClientForm').reset();
+}
+
+function generateNewClientSlug(name) {
+  const slug = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+  document.getElementById('newBizSlug').value = slug;
+}
+
+async function handleCreateClient(e) {
+  e.preventDefault();
+  
+  const bizName = document.getElementById('newBizName').value.trim();
+  const slug = document.getElementById('newBizSlug').value.trim();
+  const email = document.getElementById('newBizEmail').value.trim();
+  const password = document.getElementById('newBizPassword').value;
+  const btn = document.getElementById('btnCreateClient');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Creando cliente...';
+
+  try {
+    // 1. Crear usuario en Auth de Supabase con el cliente secundario
+    const { data: authData, error: authError } = await supabaseAdminAuth.auth.signUp({
+      email,
+      password
+    });
+    
+    if (authError) throw authError;
+    if (!authData || !authData.user) throw new Error('El correo ya existe o requiere confirmación');
+
+    const userId = authData.user.id;
+
+    // 2. Crear negocio usando la función RPC (usando la sesión principal del Superadmin)
+    const { data: bizId, error: bizError } = await supabaseClient.rpc('create_business_with_settings', {
+      p_owner_id: userId,
+      p_slug: slug,
+      p_business_name: bizName
+    });
+
+    if (bizError) throw bizError;
+
+    showToast('✅ ¡Cliente creado exitosamente!');
+    closeClientModal();
+    await loadBusinesses(); // Recargar la tabla
+
+  } catch (err) {
+    showToast('❌ Error: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Crear y Guardar';
+  }
+}
+
 // Inicializar
 document.addEventListener('DOMContentLoaded', initSuperAdmin);

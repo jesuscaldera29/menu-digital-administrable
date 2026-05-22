@@ -76,7 +76,10 @@
 
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-black">Directorio de Restaurantes</h2>
-        <button onclick="loadBusinesses()" class="px-4 py-2 rounded-lg bg-white/5 text-gray-300 text-sm font-bold hover:bg-white/10">🔄 Refrescar</button>
+        <div class="flex gap-3">
+          <button onclick="loadBusinesses()" class="px-4 py-2 rounded-lg bg-white/5 text-gray-300 text-sm font-bold hover:bg-white/10">🔄 Refrescar</button>
+          <button onclick="openClientModal()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-red-500 to-orange-500 text-white text-sm font-bold shadow-lg hover:scale-105 transition-transform">➕ Nuevo Cliente</button>
+        </div>
       </div>
 
       <div class="table-container overflow-x-auto">
@@ -100,6 +103,37 @@
   </div>
 
   <div id="toast" class="toast"></div>
+
+  <!-- MODAL NUEVO CLIENTE -->
+  <div id="clientModal" class="hidden fixed inset-0 z-[9999] flex items-center justify-center">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeClientModal()"></div>
+    <div class="relative bg-[#111] border border-white/10 rounded-3xl p-8 w-full max-w-md shadow-2xl">
+      <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-black text-white">Crear Nuevo Cliente</h3>
+        <button onclick="closeClientModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+      
+      <form id="createClientForm" onsubmit="handleCreateClient(event)" class="space-y-4">
+        <div>
+          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Nombre del Negocio</label>
+          <input type="text" id="newBizName" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: La Granja" required oninput="generateNewClientSlug(this.value)">
+        </div>
+        <div>
+          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Enlace del Menú</label>
+          <input type="text" id="newBizSlug" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="la-granja" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Correo Electrónico (Acceso)</label>
+          <input type="email" id="newBizEmail" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="cliente@correo.com" required>
+        </div>
+        <div>
+          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Contraseña Inicial</label>
+          <input type="text" id="newBizPassword" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Min. 6 caracteres" value="123456" required minlength="6">
+        </div>
+        <button type="submit" id="btnCreateClient" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors">Crear y Guardar</button>
+      </form>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js?v=3"></script>
