@@ -311,6 +311,10 @@
         });
         if (authError) throw authError;
 
+        if (!authData || !authData.user) {
+          throw new Error('Este correo ya está registrado o requiere confirmación. Intenta iniciar sesión.');
+        }
+
         const userId = authData.user.id;
 
         // 2. Create business + settings using the database function
