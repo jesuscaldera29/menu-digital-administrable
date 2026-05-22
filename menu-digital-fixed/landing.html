@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MenuPro | Tu Menú Digital Profesional</title>
+  <meta name="description" content="Crea tu menú digital profesional en minutos. Gestiona pedidos, clientes y reportes desde un panel potente.">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body{font-family:'Outfit',sans-serif;background:#0a0a0a;color:#fff;overflow-x:hidden}
+    .hero-glow{position:absolute;width:800px;height:800px;border-radius:50%;filter:blur(200px);opacity:.12;pointer-events:none}
+    .g1{top:-400px;left:-200px;background:#ff5f6d}
+    .g2{bottom:-400px;right:-200px;background:#ffc371}
+    .feature-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:32px;transition:all .3s}
+    .feature-card:hover{background:rgba(255,255,255,.07);transform:translateY(-4px);border-color:rgba(255,255,255,.12)}
+    .cta-btn{background:linear-gradient(135deg,#ff5f6d,#ffc371);padding:18px 40px;border-radius:20px;font-weight:800;font-size:18px;color:#fff;border:none;cursor:pointer;transition:all .3s;box-shadow:0 8px 32px rgba(255,95,109,.3);display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+    .cta-btn:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(255,95,109,.4)}
+    .mockup-img{border-radius:20px;box-shadow:0 32px 80px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.06);width:100%;max-width:500px}
+    .stat-card{background:linear-gradient(135deg,rgba(255,95,109,.1),rgba(255,195,113,.1));border:1px solid rgba(255,95,109,.15);border-radius:20px;padding:24px;text-align:center}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+    .float-anim{animation:float 4s ease-in-out infinite}
+  </style>
+</head>
+<body>
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
+
+  <!-- NAV -->
+  <nav class="fixed top-0 left-0 right-0 z-50 px-6 py-4" style="background:rgba(10,10,10,.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.05)">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center"><span class="text-xl">🍽️</span></div>
+        <span class="text-xl font-black">MenuPro</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="login.html" class="text-sm font-bold text-gray-400 hover:text-white transition-colors px-4 py-2">Iniciar Sesión</a>
+        <a href="register.html" class="text-sm font-bold bg-white/10 hover:bg-white/15 px-5 py-2.5 rounded-xl transition-all border border-white/10">Crear Cuenta</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="min-h-screen flex items-center pt-20 pb-16 px-6 relative">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <div class="inline-block bg-white/5 border border-white/10 rounded-full px-4 py-1.5 text-xs font-bold text-orange-400 uppercase tracking-widest mb-6">✨ Plataforma #1 en Menús Digitales</div>
+        <h1 class="text-4xl md:text-6xl font-black leading-[1.1] mb-6">Tu menú digital <span class="bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent">profesional</span> en minutos</h1>
+        <p class="text-gray-400 text-lg mb-8 max-w-lg">Crea tu menú, recibe pedidos por WhatsApp, gestiona clientes y genera reportes. Todo desde un panel potente y fácil de usar.</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="register.html" class="cta-btn">🚀 Empezar Gratis</a>
+          <a href="#features" class="px-8 py-4 rounded-xl font-bold text-gray-400 hover:text-white transition-colors border border-white/10 hover:border-white/20 text-center">Ver Funciones</a>
+        </div>
+        <div class="flex items-center gap-6 mt-10">
+          <div class="stat-card flex-1"><p class="text-2xl font-black">500+</p><p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Negocios Activos</p></div>
+          <div class="stat-card flex-1"><p class="text-2xl font-black">50K+</p><p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Pedidos Procesados</p></div>
+          <div class="stat-card flex-1"><p class="text-2xl font-black">4.9⭐</p><p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">Valoración</p></div>
+        </div>
+      </div>
+      <div class="flex justify-center">
+        <img src="img/hero_mockup.png" alt="MenuPro Preview" class="mockup-img float-anim">
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-24 px-6">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-5xl font-black mb-4">Todo lo que necesitas</h2>
+        <p class="text-gray-500 text-lg">Funcionalidades profesionales para hacer crecer tu negocio</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="feature-card"><div class="text-3xl mb-4">📱</div><h3 class="text-lg font-black mb-2">Menú Digital Premium</h3><p class="text-gray-500 text-sm">Catálogo visual con fotos, precios y categorías. Tus clientes piden desde el celular.</p></div>
+        <div class="feature-card"><div class="text-3xl mb-4">📲</div><h3 class="text-lg font-black mb-2">Pedidos por WhatsApp</h3><p class="text-gray-500 text-sm">Los pedidos llegan directo a tu WhatsApp con todos los detalles del cliente.</p></div>
+        <div class="feature-card"><div class="text-3xl mb-4">👨‍🍳</div><h3 class="text-lg font-black mb-2">Panel de Administración</h3><p class="text-gray-500 text-sm">Gestiona productos, pedidos, clientes y reportes desde un panel intuitivo.</p></div>
+        <div class="feature-card"><div class="text-3xl mb-4">📊</div><h3 class="text-lg font-black mb-2">Reportes de Ventas</h3><p class="text-gray-500 text-sm">Filtra por fechas, ve totales, ticket promedio y resumen de operaciones.</p></div>
+        <div class="feature-card"><div class="text-3xl mb-4">🔗</div><h3 class="text-lg font-black mb-2">Tu Propia URL</h3><p class="text-gray-500 text-sm">Tu menú en tudominio.com/tu-negocio. Compártelo en redes y tarjetas.</p></div>
+        <div class="feature-card"><div class="text-3xl mb-4">🖨️</div><h3 class="text-lg font-black mb-2">QR para Mesas</h3><p class="text-gray-500 text-sm">Genera códigos QR individuales para cada mesa de tu local.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ADMIN PREVIEW -->
+  <section class="py-24 px-6 relative">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div class="flex justify-center order-2 lg:order-1">
+        <img src="img/admin_mockup.png" alt="Panel Admin" class="mockup-img">
+      </div>
+      <div class="order-1 lg:order-2">
+        <h2 class="text-3xl md:text-4xl font-black mb-6">Panel de control <span class="text-orange-400">potente</span></h2>
+        <p class="text-gray-400 mb-8">Gestiona todo tu negocio desde un solo lugar. Agrega productos, revisa pedidos en tiempo real, y analiza tus ventas.</p>
+        <ul class="space-y-4">
+          <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-green-500/15 flex items-center justify-center text-green-400 text-sm">✅</span><span class="font-medium">Gestión de productos con imágenes</span></li>
+          <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center text-blue-400 text-sm">📋</span><span class="font-medium">Seguimiento de pedidos en tiempo real</span></li>
+          <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center text-purple-400 text-sm">👤</span><span class="font-medium">Directorio de clientes automático</span></li>
+          <li class="flex items-center gap-3"><span class="w-8 h-8 rounded-lg bg-orange-500/15 flex items-center justify-center text-orange-400 text-sm">📊</span><span class="font-medium">Reportes y análisis de ventas</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOBILE PREVIEW -->
+  <section class="py-24 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-3xl md:text-4xl font-black mb-6">Experiencia <span class="text-orange-400">móvil</span> perfecta</h2>
+        <p class="text-gray-400 mb-8">Tus clientes navegan tu menú, eligen productos, y hacen su pedido desde cualquier celular. Sin instalar nada.</p>
+        <a href="register.html" class="cta-btn">🚀 Crear Mi Menú Ahora</a>
+      </div>
+      <div class="flex justify-center">
+        <img src="img/mobile_mockup.png" alt="Menú Móvil" class="mockup-img float-anim" style="animation-delay:.5s;max-width:350px">
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="py-24 px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="feature-card !p-12 !rounded-[32px]" style="background:linear-gradient(135deg,rgba(255,95,109,.08),rgba(255,195,113,.08))">
+        <h2 class="text-3xl md:text-4xl font-black mb-4">¿Listo para digitalizar tu menú?</h2>
+        <p class="text-gray-400 text-lg mb-8">Empieza gratis en menos de 2 minutos. Sin tarjeta de crédito.</p>
+        <a href="register.html" class="cta-btn text-lg">🚀 Empezar Gratis Ahora</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-white/5 py-8 px-6">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-sm">🍽️</div><span class="font-black">MenuPro</span></div>
+      <p class="text-gray-600 text-sm">© 2026 MenuPro. Todos los derechos reservados.</p>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estado de tu Pedido | Menú Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #F8F9FA;
+      font-family: 'Outfit', sans-serif;
+      color: #1A1A1A;
+    }
+    .status-step {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      padding-bottom: 24px;
+    }
+    .status-step::after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 40px;
+      width: 2px;
+      height: calc(100% - 32px);
+      background: #E5E7EB;
+      z-index: 1;
+    }
+    .status-step:last-child::after {
+      display: none;
+    }
+    .status-step.active::after {
+      background: #EA580C;
+    }
+    .status-step.completed::after {
+      background: #22C55E;
+    }
+    .step-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #F3F4F6;
+      border: 2px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+    }
+    .status-step.active .step-circle {
+      background: #EA580C;
+      border-color: #EA580C;
+      color: white;
+      box-shadow: 0 0 15px rgba(234, 88, 12, 0.4);
+    }
+    .status-step.completed .step-circle {
+      background: #22C55E;
+      border-color: #22C55E;
+      color: white;
+      box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+  <div class="max-w-md w-full bg-white rounded-[32px] shadow-2xl p-6 md:p-8 border border-gray-50 text-center relative overflow-hidden">
+    <!-- Header -->
+    <div class="mb-6 flex flex-col items-center">
+      <div class="w-20 h-20 rounded-full bg-orange-50 flex items-center justify-center mb-3">
+        <span id="headerEmoji" class="text-4xl">🍔</span>
+      </div>
+      <h1 class="text-2xl font-black" id="businessName">Tronco E' Filo</h1>
+      <p class="text-xs font-black tracking-widest text-orange-600 uppercase mt-1">Estado de tu Pedido</p>
+    </div>
+
+    <!-- Error/Expired Screen -->
+    <div id="expiredScreen" class="hidden py-8">
+      <div class="text-6xl mb-4">⏳</div>
+      <h2 class="text-xl font-bold text-red-600 mb-2">Enlace Expirado o Inválido</h2>
+      <p class="text-gray-500 text-sm">Por razones de seguridad, los enlaces de seguimiento solo son válidos por 1 hora.</p>
+      <a href="index.html" class="mt-6 inline-block bg-black text-white px-6 py-3 rounded-xl font-bold">Volver al Menú</a>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="py-12">
+      <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-orange-600 mx-auto"></div>
+      <p class="text-gray-500 text-sm mt-4">Obteniendo estado de tu pedido...</p>
+    </div>
+
+    <!-- Main Status Tracker -->
+    <div id="trackerScreen" class="hidden text-left">
+      <div class="bg-gray-50 p-4 rounded-2xl mb-6 flex justify-between items-center">
+        <div>
+          <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Pedido</p>
+          <p class="text-lg font-black text-orange-600" id="orderIdText">#0000</p>
+        </div>
+        <div class="text-right">
+          <p class="text-[10px] font-black text-gray-400 uppercase tracking-wider">Última actualización</p>
+          <p class="text-xs text-gray-500 font-bold" id="lastUpdated">cada 10s</p>
+        </div>
+      </div>
+
+      <!-- Status Steps -->
+      <div class="space-y-1 my-8 pl-4">
+        <!-- Pendiente -->
+        <div class="status-step" id="step-Pendiente">
+          <div class="step-circle">⏳</div>
+          <div>
+            <h4 class="font-bold text-base text-gray-900">Pendiente</h4>
+            <p class="text-xs text-gray-500">Recibido en el restaurante y en espera de confirmación.</p>
+          </div>
+        </div>
+
+        <!-- Confirmado -->
+        <div class="status-step" id="step-Confirmado">
+          <div class="step-circle">✅</div>
+          <div>
+            <h4 class="font-bold text-base text-gray-900">Confirmado</h4>
+            <p class="text-xs text-gray-500">Tu pedido ha sido aprobado por el local.</p>
+          </div>
+        </div>
+
+        <!-- Preparando -->
+        <div class="status-step" id="step-Preparando">
+          <div class="step-circle">👨‍🍳</div>
+          <div>
+            <h4 class="font-bold text-base text-gray-900">Preparando</h4>
+            <p class="text-xs text-gray-500">Nuestro equipo está preparando tus platos favoritos.</p>
+          </div>
+        </div>
+
+        <!-- Entregado -->
+        <div class="status-step" id="step-Entregado">
+          <div class="step-circle">🚚</div>
+          <div>
+            <h4 class="font-bold text-base text-gray-900">Entregado / Despachado</h4>
+            <p class="text-xs text-gray-500">Tu pedido está en camino o ha sido entregado en mesa.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Order Details Summary -->
+      <div class="border-t pt-4">
+        <h3 class="font-bold text-xs text-gray-400 uppercase tracking-widest mb-3">Detalle del Pedido</h3>
+        <div id="orderItemsSummary" class="space-y-1.5 text-xs text-gray-700 max-h-[120px] overflow-y-auto pr-1"></div>
+        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl mt-4">
+          <span class="font-bold text-gray-500 text-xs">Total:</span>
+          <span class="text-lg font-black text-red-600" id="orderTotalText"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=3"></script>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('id');
+
+    async function loadOrderStatus() {
+      if (!orderId) {
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('expiredScreen').classList.remove('hidden');
+        return;
+      }
+
+      try {
+        const { data: order, error } = await supabaseClient.from('orders').select('*').eq('id', orderId).single();
+        
+        if (error || !order) {
+          document.getElementById('loadingScreen').classList.add('hidden');
+          document.getElementById('expiredScreen').classList.remove('hidden');
+          return;
+        }
+
+        // Load business settings from order's business_id
+        if (order.business_id) {
+          loadBusinessSettings(order.business_id);
+        }
+
+        // Check if expired (1 hour limit)
+        const createdAt = new Date(order.created_at);
+        const now = new Date();
+        const diffHours = (now - createdAt) / (1000 * 60 * 60);
+
+        if (diffHours > 1) {
+          document.getElementById('loadingScreen').classList.add('hidden');
+          document.getElementById('trackerScreen').classList.add('hidden');
+          document.getElementById('expiredScreen').classList.remove('hidden');
+          return;
+        }
+
+        document.getElementById('orderIdText').textContent = `#${String(order.id).padStart(4, '0')}`;
+        updateStatusStepsUI(order.status || 'Pendiente');
+
+        const items = order.items || [];
+        document.getElementById('orderItemsSummary').innerHTML = items.map(item => `
+          <div class="flex justify-between">
+            <span>${item.qty}x ${item.name}</span>
+            <span class="font-semibold">$${Number(item.price * item.qty).toLocaleString()}</span>
+          </div>
+        `).join('');
+
+        document.getElementById('orderTotalText').textContent = `$${Number(order.total).toLocaleString()}`;
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('trackerScreen').classList.remove('hidden');
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function updateStatusStepsUI(currentStatus) {
+      const statuses = ['Pendiente', 'Confirmado', 'Preparando', 'Entregado'];
+      const idx = statuses.indexOf(currentStatus);
+      statuses.forEach((s, i) => {
+        const el = document.getElementById(`step-${s}`);
+        if (!el) return;
+        el.classList.remove('active', 'completed');
+        if (i === idx) el.classList.add('active');
+        else if (i < idx) el.classList.add('completed');
+      });
+    }
+
+    async function loadBusinessSettings(bizId) {
+      try {
+        const { data } = await supabaseClient.from('settings').select('*').eq('business_id', bizId).single();
+        if (data) {
+          if (data.business_name) document.getElementById('businessName').textContent = data.business_name;
+          if (data.logo_url) {
+            const emoji = document.getElementById('headerEmoji');
+            emoji.outerHTML = `<img src="${data.logo_url}" class="w-20 h-20 object-contain rounded-full">`;
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    loadOrderStatus();
+    setInterval(loadOrderStatus, 10000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión | MenuPro</title>
+  <meta name="description" content="Inicia sesión en tu panel de administración MenuPro para gestionar tu menú digital.">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      background: #0a0a0a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      filter: blur(150px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    .glow-1 { top: -200px; left: -200px; background: #ff5f6d; }
+    .glow-2 { bottom: -200px; right: -200px; background: #ffc371; }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(40px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 32px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.05);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: 'Outfit', sans-serif;
+      outline: none;
+      transition: all 0.3s;
+    }
+
+    .form-input::placeholder { color: rgba(255, 255, 255, 0.3); }
+    .form-input:focus {
+      border-color: #ff5f6d;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(255, 95, 109, 0.1);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ff5f6d, #ffc371);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      transition: all 0.3s;
+      box-shadow: 0 8px 32px rgba(255, 95, 109, 0.3);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(255, 95, 109, 0.4);
+    }
+
+    .btn-login:active { transform: translateY(0); }
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(255, 77, 77, 0.95);
+      backdrop-filter: blur(10px);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 16px;
+      z-index: 9999;
+      transition: all 0.4s;
+      opacity: 0;
+      font-weight: 600;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .glass-card {
+        margin: 16px;
+        padding: 32px 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <div class="glass-card">
+    <!-- Logo -->
+    <div class="text-center mb-8">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center mb-4 shadow-lg">
+        <span class="text-3xl">🍽️</span>
+      </div>
+      <h1 class="text-white text-2xl font-black tracking-tight">Bienvenido de vuelta</h1>
+      <p class="text-gray-500 text-sm mt-1">Ingresa a tu panel de administración</p>
+    </div>
+
+    <!-- Form -->
+    <form id="loginForm" class="space-y-4" onsubmit="handleLogin(event)">
+      <div>
+        <label class="text-gray-400 text-xs font-bold uppercase tracking-widest block mb-2">Email</label>
+        <input type="email" id="email" class="form-input" placeholder="tu@email.com" required autocomplete="email">
+      </div>
+
+      <div>
+        <label class="text-gray-400 text-xs font-bold uppercase tracking-widest block mb-2">Contraseña</label>
+        <input type="password" id="password" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" id="btnLogin" class="btn-login mt-6">
+        Iniciar Sesión
+      </button>
+    </form>
+
+    <div class="text-center mt-6">
+      <p class="text-gray-500 text-sm">
+        ¿No tienes cuenta?
+        <a href="register.html" class="text-orange-400 font-bold hover:text-orange-300 transition-colors">Crear cuenta gratis</a>
+      </p>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="/" class="text-gray-600 text-xs font-medium hover:text-gray-400 transition-colors">← Volver al inicio</a>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js?v=3"></script>
+  <script>
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show';
+      setTimeout(() => t.className = 'toast', 4000);
+    }
+
+    // Check if already logged in
+    (async () => {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session) {
+        window.location.href = 'admin.html';
+      }
+    })();
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('btnLogin');
+
+      btn.disabled = true;
+      btn.textContent = '⏳ Verificando...';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+
+        // Check if user has a business
+        const { data: biz } = await supabaseClient
+          .from('businesses')
+          .select('id, slug')
+          .eq('owner_id', data.user.id)
+          .single();
+
+        if (!biz) {
+          showToast('⚠️ No se encontró un negocio asociado. Registra uno primero.');
+          await supabaseClient.auth.signOut();
+          btn.disabled = false;
+          btn.textContent = 'Iniciar Sesión';
+          return;
+        }
+
+        window.location.href = 'admin.html';
+      } catch (err) {
+        showToast('❌ ' + (err.message || 'Error al iniciar sesión'));
+        btn.disabled = false;
+        btn.textContent = 'Iniciar Sesión';
+      }
+    }
+  </script>
+</body>
+
+</html>
