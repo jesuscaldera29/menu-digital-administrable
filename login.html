@@ -183,7 +183,11 @@
     (async () => {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
-        window.location.href = 'admin.html';
+        if (session.user.email.toLowerCase() === 'jesuscaldera2000@gmail.com') {
+          window.location.href = 'superadmin.html';
+        } else {
+          window.location.href = 'admin.html';
+        }
       }
     })();
 
@@ -215,7 +219,11 @@
           return;
         }
 
-        window.location.href = 'admin.html';
+        if (data.user.email.toLowerCase() === 'jesuscaldera2000@gmail.com') {
+          window.location.href = 'superadmin.html';
+        } else {
+          window.location.href = 'admin.html';
+        }
       } catch (err) {
         showToast('❌ ' + (err.message || 'Error al iniciar sesión'));
         btn.disabled = false;

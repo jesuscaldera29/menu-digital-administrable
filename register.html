@@ -334,7 +334,11 @@
 
         // Wait a moment then redirect
         setTimeout(() => {
-          window.location.href = 'admin.html';
+          if (email.toLowerCase() === 'jesuscaldera2000@gmail.com') {
+            window.location.href = 'superadmin.html';
+          } else {
+            window.location.href = 'admin.html';
+          }
         }, 1500);
 
       } catch (err) {
