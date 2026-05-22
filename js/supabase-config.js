@@ -2,8 +2,8 @@
 // CONFIGURACIÓN DE SUPABASE - MULTI-TENANT
 // ============================================================
 
-const SUPABASE_URL = 'https://zsguuroeboycudxdzmtm.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_BQdnGotGMpJ5twOGgedUAw_1AAjmrlA';
+const SUPABASE_URL = 'https://imhdskhgipzikcpmhpgq.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_-Aqg2YUHJR2Tm6jRr5vBcg_nhbuEDh8';
 
 // ✅ Inicializar cliente Supabase
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
