@@ -105,6 +105,33 @@ async function loadSettings() {
           if (tableSelect) tableSelect.value = mesaQuery;
         }
       }
+
+      // === GENERAR PWA MANIFEST DINÁMICO ===
+      try {
+        const fallbackIcon = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.business_name || 'MP') + '&background=EA580C&color=fff&size=512';
+        const iconUrl = data.logo_url || fallbackIcon;
+        const bizName = data.business_name || 'Menú Digital';
+        
+        const manifestContent = {
+          name: bizName,
+          short_name: bizName,
+          start_url: window.location.pathname + window.location.search,
+          display: "standalone",
+          background_color: "#F8F9FA",
+          theme_color: "#EA580C",
+          icons: [
+            { src: iconUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
+            { src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+          ]
+        };
+        
+        const blob = new Blob([JSON.stringify(manifestContent)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(blob);
+        const manifestLink = document.getElementById('dynamic-manifest');
+        if (manifestLink) manifestLink.setAttribute('href', manifestURL);
+      } catch (e) {
+        console.warn('No se pudo generar el manifest dinámico', e);
+      }
     }
   } catch (err) {
     console.error('Error loading settings:', err);
@@ -398,3 +425,26 @@ function closeTicket() {
   await loadSettings();
   await loadProducts();
 })();
+
+// ==========================================
+// PWA INSTALL LOGIC (PUBLIC MENU)
+// ==========================================
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const btn = document.getElementById('btnInstallMenu');
+  if(btn) {
+    btn.classList.remove('hidden');
+    btn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('App instalada');
+      }
+      deferredPrompt = null;
+      btn.classList.add('hidden');
+    });
+  }
+});

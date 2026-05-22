@@ -5,6 +5,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Menú Digital | Pedido Inteligente</title>
+  
+  <link rel="manifest" id="dynamic-manifest">
+  <meta name="theme-color" content="#EA580C">
 
   <!-- Google Fonts: Outfit -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
@@ -194,9 +197,13 @@
         </div>
       </div>
 
-      <div
-        class="bg-black text-white px-4 py-2 md:px-6 md:py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2">
-        $<span id="cartTotal" class="text-sm md:text-lg">0</span>
+      <div class="flex items-center gap-2">
+        <button id="btnInstallMenu" class="hidden bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-2 md:px-4 md:py-3 rounded-2xl font-bold shadow-xl text-xs md:text-sm active:scale-95 transition-all flex items-center gap-1">
+          📱 <span class="hidden md:inline">Instalar App</span>
+        </button>
+        <div class="bg-black text-white px-4 py-2 md:px-6 md:py-3 rounded-2xl font-bold shadow-xl flex items-center gap-2">
+          $<span id="cartTotal" class="text-sm md:text-lg">0</span>
+        </div>
       </div>
     </div>
   </header>
@@ -510,6 +517,17 @@
       const orderDetails = document.getElementById('orderDetails');
       const isShown = orderDetails && orderDetails.style.display !== 'none' && orderDetails.style.display !== '';
       if (btnText) btnText.innerText = isShown ? 'Ocultar resumen' : 'Completar mi pedido';
+    }
+
+    // Registrar Service Worker para PWA (Menú Público)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('SW Menu registrado', reg);
+        }).catch(err => {
+          console.warn('Error SW Menu', err);
+        });
+      });
     }
   </script>
 
