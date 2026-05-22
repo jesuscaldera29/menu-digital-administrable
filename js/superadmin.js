@@ -137,7 +137,8 @@ function renderBusinesses() {
         <td>
           <div class="flex gap-2">
             ${actionBtn}
-            <button onclick="deleteBusiness('${b.id}', '${b.business_name}')" class="px-3 py-1 bg-red-900/50 text-red-400 border border-red-900 rounded-lg text-sm hover:bg-red-600 hover:text-white transition-all">🗑️ Eliminar</button>
+            <button onclick="openEditModal('${b.id}', '${b.business_name.replace(/'/g, "\\'")}', '${b.slug}')" class="px-3 py-1 bg-blue-900/50 text-blue-400 border border-blue-900 rounded-lg text-sm hover:bg-blue-600 hover:text-white transition-all">✏️ Editar</button>
+            <button onclick="deleteBusiness('${b.id}', '${b.business_name.replace(/'/g, "\\'")}')" class="px-3 py-1 bg-red-900/50 text-red-400 border border-red-900 rounded-lg text-sm hover:bg-red-600 hover:text-white transition-all">🗑️ Eliminar</button>
           </div>
         </td>
       </tr>
@@ -263,6 +264,53 @@ async function handleCreateClient(e) {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Crear y Guardar';
+  }
+}
+
+// ==========================================
+// LÓGICA PARA EDITAR CLIENTE (MODAL)
+// ==========================================
+
+function openEditModal(id, name, slug) {
+  document.getElementById('editBizId').value = id;
+  document.getElementById('editBizName').value = name;
+  document.getElementById('editBizSlug').value = slug;
+  document.getElementById('editClientModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('editClientModal').classList.add('hidden');
+  document.getElementById('editClientForm').reset();
+}
+
+async function handleEditClient(e) {
+  e.preventDefault();
+  
+  const id = document.getElementById('editBizId').value;
+  const name = document.getElementById('editBizName').value.trim();
+  const slug = document.getElementById('editBizSlug').value.trim();
+  const btn = document.getElementById('btnEditClient');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Guardando...';
+
+  try {
+    const { error } = await supabaseClient
+      .from('businesses')
+      .update({ business_name: name, slug: slug })
+      .eq('id', id);
+
+    if (error) throw error;
+
+    showToast('✅ Cambios guardados correctamente.');
+    closeEditModal();
+    await loadBusinesses(); // Recargar la tabla
+
+  } catch (err) {
+    showToast('❌ Error al editar: ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Guardar Cambios';
   }
 }
 
