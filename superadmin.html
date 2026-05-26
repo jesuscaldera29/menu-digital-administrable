@@ -155,6 +155,34 @@
         </div>
       </div>
 
+      <!-- SECCIÓN: CONFIGURACIÓN DE PRECIOS Y CTA -->
+      <div class="table-container p-8 mb-10">
+        <h2 class="text-2xl font-black mb-2 flex items-center gap-3">💰 Configuración de Ventas (Landing)</h2>
+        <p class="text-gray-400 text-sm mb-6">Define los precios y los datos de contacto para recibir prospectos de WhatsApp.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+          <div>
+            <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Precio Antes ($)</label>
+            <input type="text" id="priceOldInput" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: 150">
+          </div>
+          <div>
+            <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Precio Ahora ($)</label>
+            <input type="text" id="priceCurrentInput" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: 49">
+          </div>
+          <div>
+            <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Cupos Restantes</label>
+            <input type="number" id="spotsLeftInput" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: 3" min="1">
+          </div>
+          <div>
+            <label class="text-gray-400 text-xs font-bold uppercase block mb-1">WhatsApp de Ventas</label>
+            <input type="text" id="whatsappSalesInput" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: 573015027933">
+          </div>
+        </div>
+        <div class="mt-4 flex justify-end">
+          <button onclick="saveLandingPrices(event)" class="bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold px-8 py-3 rounded-xl text-sm">Guardar Configuración de Ventas</button>
+        </div>
+      </div>
+
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-black">Directorio de Restaurantes</h2>
         <div class="flex gap-3">

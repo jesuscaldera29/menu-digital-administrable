@@ -345,6 +345,10 @@ async function loadLandingImages() {
       if (data.mobile_image_url) document.getElementById('previewMobile').src = data.mobile_image_url;
       if (data.qr_image_url) document.getElementById('previewQr').src = data.qr_image_url;
       if (data.fb_pixel_id) document.getElementById('fbPixelInput').value = data.fb_pixel_id;
+      if (data.price_old) document.getElementById('priceOldInput').value = data.price_old;
+      if (data.price_current) document.getElementById('priceCurrentInput').value = data.price_current;
+      if (data.spots_left) document.getElementById('spotsLeftInput').value = data.spots_left;
+      if (data.whatsapp_number) document.getElementById('whatsappSalesInput').value = data.whatsapp_number;
     }
   } catch (err) {
     console.warn('No se pudieron cargar las imágenes de la landing settings', err);
@@ -423,6 +427,38 @@ async function saveFBPixel(event) {
 
     if (error) throw error;
     showToast('✅ Pixel de Facebook guardado correctamente');
+  } catch (err) {
+    showToast('❌ Error: ' + err.message);
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+async function saveLandingPrices(event) {
+  const priceOld = document.getElementById('priceOldInput').value.trim();
+  const priceCurrent = document.getElementById('priceCurrentInput').value.trim();
+  const spotsLeft = document.getElementById('spotsLeftInput').value.trim() || 3;
+  const whatsappSales = document.getElementById('whatsappSalesInput').value.trim() || '573015027933';
+  
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Guardando...';
+  btn.disabled = true;
+
+  try {
+    const { error } = await supabaseClient
+      .from('landing_settings')
+      .update({ 
+        price_old: priceOld, 
+        price_current: priceCurrent,
+        spots_left: spotsLeft,
+        whatsapp_number: whatsappSales
+      })
+      .eq('id', 1);
+
+    if (error) throw error;
+    showToast('✅ Configuración de ventas guardada');
   } catch (err) {
     showToast('❌ Error: ' + err.message);
   } finally {
