@@ -383,6 +383,27 @@
     </div>
   </div>
 
+  <!-- MODAL DE ACOMPAÑAMIENTOS -->
+  <div id="accompanimentsModal" class="fixed inset-0 bg-black/80 z-[300] hidden items-center justify-center p-4 backdrop-blur-md">
+    <div class="bg-white w-full max-w-md rounded-[32px] p-6 shadow-2xl relative">
+      <h3 class="text-xl font-black mb-2 text-black flex items-center gap-2">🍟 Elige tus Acompañamientos</h3>
+      <p class="text-xs text-gray-500 mb-4 font-medium">Selecciona los que desees agregar a tu plato:</p>
+      
+      <div id="accompanimentsList" class="space-y-2.5 max-h-[250px] overflow-y-auto pr-2 custom-scroll mb-6">
+        <!-- Checkboxes se cargan aquí -->
+      </div>
+      
+      <div class="flex gap-3">
+        <button onclick="confirmAccompaniments()" class="w-full bg-black text-white py-3.5 rounded-2xl font-bold active:scale-95 transition-all text-sm">
+          Agregar al Pedido
+        </button>
+        <button onclick="closeAccompanimentsModal()" class="w-full bg-gray-100 text-black py-3.5 rounded-2xl font-bold active:scale-95 transition-all text-sm">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast" class="toast hidden"></div>
 
   <!-- 404 SCREEN -->
@@ -441,9 +462,11 @@
     window.renderCategories = function () {
       const container = document.getElementById('categoryTabs');
       if (!container) return;
-      container.innerHTML = categories.map(c => {
+      // Excluir Acompañantes y Acompañantes del dia de las pestañas
+      const filteredCategories = categories.filter(c => c !== 'Acompañantes' && c !== 'Acompañantes del dia');
+      container.innerHTML = filteredCategories.map(c => {
         const active = c === activeCategory ? 'active' : '';
-        const emoji = { 'Todos': '🌟', 'Desayunos': '🍳', 'Almuerzos': '🍲', 'Acompañantes del dia': '🍟', 'Comidas Rápidas': '🍔', 'Bebidas': '🥤' }[c] || '🍽️';
+        const emoji = { 'Todos': '🌟', 'Desayunos': '🍳', 'Almuerzos': '🍲', 'Comidas Rápidas': '🍔', 'Bebidas': '🥤' }[c] || '🍽️';
         return `<button class="category-tab px-6 py-3 md:px-8 md:py-4 rounded-2xl font-bold whitespace-nowrap text-sm md:text-base ${active}" onclick="setCategory('${c}')"><span>${emoji}</span> ${c}</button>`;
       }).join('');
     };
@@ -453,7 +476,8 @@
       const search = document.getElementById('searchInput').value.toLowerCase();
       const container = document.getElementById('menuGrid');
       container.innerHTML = '';
-      let filtered = products.filter(p => (activeCategory === 'Todos' || p.category === activeCategory) && p.name.toLowerCase().includes(search));
+      // Excluir Acompañantes del listado principal
+      let filtered = products.filter(p => p.category !== 'Acompañantes' && p.category !== 'Acompañantes del dia' && (activeCategory === 'Todos' || p.category === activeCategory) && p.name.toLowerCase().includes(search));
       const categoriesInMenu = [...new Set(filtered.map(p => p.category))];
       if (!categoriesInMenu.length) {
         container.innerHTML = '<div class="text-center py-20 text-gray-400 font-bold">No encontramos resultados 🔍</div>';
@@ -461,7 +485,7 @@
       }
       categoriesInMenu.forEach(cat => {
         const catProducts = filtered.filter(p => p.category === cat);
-        const emoji = { 'Desayunos': '🍳', 'Almuerzos': '🍲', 'Acompañantes del dia': '🍟', 'Comidas Rápidas': '🍔', 'Bebidas': '🥤' }[cat] || '🍽️';
+        const emoji = { 'Desayunos': '🍳', 'Almuerzos': '🍲', 'Comidas Rápidas': '🍔', 'Bebidas': '🥤' }[cat] || '🍽️';
         container.innerHTML += `
                 <h2 class="category-title"><span>${emoji}</span> ${(cat || 'Sin Categoría').toUpperCase()}</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mb-12">
@@ -473,7 +497,7 @@
                                 <p class="text-xs md:text-sm text-gray-600 leading-relaxed mb-4 line-clamp-3">${p.description || 'Deliciosa receta preparada al instante.'}</p>
                                 <div class="flex items-center justify-between mt-auto">
                                     <div class="m-price">$${Number(p.price).toLocaleString()}</div>
-                                    <button class="bg-black text-white px-5 py-3 rounded-xl font-bold active:scale-95 transition-all text-xs md:text-sm" onclick="addToCart('${p.id}')">AGREGAR</button>
+                                    <button class="bg-black text-white px-5 py-3 rounded-xl font-bold active:scale-95 transition-all text-xs md:text-sm" onclick="openAccompanimentsModal('${p.id}')">AGREGAR</button>
                                 </div>
                             </div>
                         </div>`).join('')}
@@ -481,7 +505,51 @@
       });
     };
 
-    // WHATSAPP
+    // LOGICA DE MODAL DE ACOMPAÑAMIENTOS
+    let currentAccProductId = null;
+
+    window.openAccompanimentsModal = function(productId) {
+      const p = products.find(x => String(x.id) === String(productId));
+      if (!p || !p.accompaniments) {
+        addToCart(productId, []);
+        return;
+      }
+      
+      const list = p.accompaniments.split(',').map(x => x.trim()).filter(x => x.length > 0);
+      if (list.length === 0) {
+        addToCart(productId, []);
+        return;
+      }
+      
+      currentAccProductId = productId;
+      const container = document.getElementById('accompanimentsList');
+      container.innerHTML = list.map((acc, index) => `
+        <label class="flex items-center gap-3 p-3.5 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-colors border border-gray-100">
+          <input type="checkbox" name="accOption" value="${acc}" class="w-5 h-5 accent-orange-600 rounded">
+          <span class="text-sm font-bold text-gray-700">${acc}</span>
+        </label>
+      `).join('');
+      
+      document.getElementById('accompanimentsModal').style.display = 'flex';
+    };
+
+    window.closeAccompanimentsModal = function() {
+      document.getElementById('accompanimentsModal').style.display = 'none';
+      currentAccProductId = null;
+    };
+
+    window.confirmAccompaniments = function() {
+      if (!currentAccProductId) return;
+      const selected = [];
+      document.querySelectorAll('input[name="accOption"]:checked').forEach(cb => {
+        selected.push(cb.value);
+      });
+      
+      addToCart(currentAccProductId, selected);
+      closeAccompanimentsModal();
+    };
+
+    // WHATSAPP (SOPORTE PARA OBJETO DE CARRITO)
     window.sendWhatsApp = function () {
       if (!Object.keys(cart).length) return alert('Carrito vacío');
       const name = document.getElementById('customerName').value.trim();
@@ -494,11 +562,14 @@
 
       let msg = `🛒 *NUEVO PEDIDO (${delivery.toUpperCase()})*\n━━━━━━━━━━━━━━━━━━━\n\n`;
       let total = 0;
-      for (const [id, qty] of Object.entries(cart)) {
-        const p = products.find(x => String(x.id) === String(id));
+      for (const [key, item] of Object.entries(cart)) {
+        const p = products.find(x => String(x.id) === String(item.id));
         if (!p) continue;
-        total += p.price * qty;
-        msg += `▪️ ${p.name} x${qty} — $${(p.price * qty).toLocaleString()}\n`;
+        total += p.price * item.qty;
+        const displayName = item.accompaniments.length 
+          ? `${p.name} (Acompañamientos: ${item.accompaniments.join(', ')})`
+          : p.name;
+        msg += `▪️ ${displayName} x${item.qty} — $${(p.price * item.qty).toLocaleString()}\n`;
       }
       msg += `\n💰 *TOTAL: $${total.toLocaleString()}*\n`;
       msg += '━━━━━━━━━━━━━━━━━━━\n\n';
@@ -530,7 +601,5 @@
       });
     }
   </script>
-
 </body>
-
 </html>

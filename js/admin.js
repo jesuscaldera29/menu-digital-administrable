@@ -273,6 +273,7 @@ async function addProduct(event) {
     const price = parseFloat(document.getElementById('prodPrice').value);
     const category = document.getElementById('prodCategory').value.trim();
     const description = document.getElementById('prodDescription').value.trim();
+    const accompaniments = document.getElementById('prodAccompaniments').value.trim();
     const file = document.getElementById('prodImage').files[0];
 
     if (!name || isNaN(price) || !category) return showToast('⚠️ Completa nombre, precio y categoría', 'error');
@@ -298,6 +299,7 @@ async function addProduct(event) {
             price, 
             category, 
             description,
+            accompaniments,
             image_url,
             business_id: businessId
         }]);
@@ -310,6 +312,7 @@ async function addProduct(event) {
         document.getElementById('prodPrice').value = '';
         document.getElementById('prodCategory').value = '';
         document.getElementById('prodDescription').value = '';
+        document.getElementById('prodAccompaniments').value = '';
         document.getElementById('prodImage').value = '';
         document.getElementById('prodPreview').src = '';
         document.getElementById('prodPreview').style.display = 'none';
@@ -386,6 +389,7 @@ function renderProducts() {
             <p class="text-gray-500 text-sm mt-2 line-clamp-2 min-h-[40px]">
                 ${p.description || 'Sin descripción disponible.'}
             </p>
+            ${p.accompaniments ? `<p class="text-xs text-orange-600 font-bold mt-1">🍟 Acompañamientos: ${p.accompaniments}</p>` : ''}
 
             <div class="grid grid-cols-2 gap-2 mt-5">
               <button class="col-span-2 ${p.available ? 'bg-gray-800' : 'bg-green-600'} text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all" onclick="toggleAvailable('${p.id}', ${p.available})">
@@ -439,6 +443,7 @@ function openEdit(id) {
     document.getElementById('editPrice').value = p.price;
     document.getElementById('editCategory').value = p.category;
     document.getElementById('editDescription').value = p.description || '';
+    document.getElementById('editAccompaniments').value = p.accompaniments || '';
     document.getElementById('editImage').value = '';
     
     const preview = document.getElementById('editPreview');
@@ -463,11 +468,12 @@ async function saveEdit() {
     const price = parseFloat(document.getElementById('editPrice').value);
     const category = document.getElementById('editCategory').value.trim();
     const description = document.getElementById('editDescription').value.trim();
+    const accompaniments = document.getElementById('editAccompaniments').value.trim();
     const file = document.getElementById('editImage').files[0];
 
     if (!name || isNaN(price) || !category) return showToast('⚠️ Completa todos los campos', 'error');
 
-    const updateData = { name, price, category, description };
+    const updateData = { name, price, category, description, accompaniments };
     if (file) {
         showToast('⏳ Subiendo imagen...');
         const url = await uploadImage(file);

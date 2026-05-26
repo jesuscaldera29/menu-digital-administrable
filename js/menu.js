@@ -149,7 +149,8 @@ async function loadProducts() {
     .order('category');
 
   products = data || [];
-  categories = ['Todos', ...new Set(products.map(p => p.category))];
+  // Excluir Acompañantes y Acompañantes del dia de las categorías de la landing/tabs principales
+  categories = ['Todos', ...new Set(products.map(p => p.category))].filter(c => c !== 'Acompañantes' && c !== 'Acompañantes del dia');
   renderCategories();
   renderMenu();
 }
@@ -177,9 +178,11 @@ function renderMenu() {
   const searchInput = document.getElementById('searchInput');
   const search = searchInput ? searchInput.value.toLowerCase() : '';
   let filtered = products.filter(p => {
+    // Excluir Acompañantes del renderizado del menú principal
+    const notAccompaniment = p.category !== 'Acompañantes' && p.category !== 'Acompañantes del dia';
     const matchCat = activeCategory === 'Todos' || p.category === activeCategory;
     const matchSearch = p.name.toLowerCase().includes(search);
-    return matchCat && matchSearch;
+    return notAccompaniment && matchCat && matchSearch;
   });
 
   const container = document.getElementById('menuGrid');
@@ -196,31 +199,63 @@ function renderMenu() {
       <div class="m-info">
         <h4>${p.name}</h4>
         <div class="m-price">${currency} $${Number(p.price).toLocaleString()}</div>
-        <button class="btn-add" onclick="addToCart(${p.id})">Agregar</button>
+        <button class="btn-add" onclick="openAccompanimentsModal(${p.id})">Agregar</button>
       </div>
     </div>
   `).join('');
 }
 
 // Cart functions
-function addToCart(id) {
-  cart[id] = (cart[id] || 0) + 1;
+function addToCart(id, accompaniments = []) {
+  const key = accompaniments.length ? `${id}_${accompaniments.join(',')}` : String(id);
+  if (cart[key]) {
+    cart[key].qty++;
+  } else {
+    cart[key] = { id, qty: 1, accompaniments };
+  }
   updateCartUI();
   showToast('✅ Agregado al carrito');
 }
 
-function removeFromCart(id) {
-  if (cart[id] > 1) cart[id]--;
-  else delete cart[id];
-  updateCartUI();
-  toggleOrderDetails();
+function addToCartFromKey(key) {
+  if (cart[key]) {
+    cart[key].qty++;
+    updateCartUI();
+    showToast('✅ Agregado al carrito');
+    
+    const el = document.getElementById('orderDetails');
+    if (el && el.style.display !== 'none') {
+      el.style.display = 'none';
+      toggleOrderDetails();
+    }
+  }
+}
+
+function removeFromCart(key) {
+  if (cart[key]) {
+    if (cart[key].qty > 1) cart[key].qty--;
+    else delete cart[key];
+    updateCartUI();
+    
+    const el = document.getElementById('orderDetails');
+    if (el && el.style.display !== 'none') {
+      if (Object.keys(cart).length === 0) {
+        el.style.display = 'none';
+        const form = document.getElementById('customerForm');
+        if (form) form.style.display = 'none';
+      } else {
+        el.style.display = 'none';
+        toggleOrderDetails();
+      }
+    }
+  }
 }
 
 function updateCartUI() {
   let total = 0;
-  for (const [id, qty] of Object.entries(cart)) {
-    const p = products.find(x => String(x.id) === String(id));
-    if (p) total += p.price * qty;
+  for (const [key, item] of Object.entries(cart)) {
+    const p = products.find(x => String(x.id) === String(item.id));
+    if (p) total += p.price * item.qty;
   }
   const cartTotal = document.getElementById('cartTotal');
   const cartTotalBottom = document.getElementById('cartTotalBottom');
@@ -237,15 +272,18 @@ function toggleOrderDetails() {
 
   if (!isOpen) {
     let html = '';
-    for (const [id, qty] of Object.entries(cart)) {
-      const p = products.find(x => String(x.id) === String(id));
+    for (const [key, item] of Object.entries(cart)) {
+      const p = products.find(x => String(x.id) === String(item.id));
       if (!p) continue;
+      const displayName = item.accompaniments.length 
+        ? `${p.name} <span class="text-xs text-gray-500 block">(Acompañamientos: ${item.accompaniments.join(', ')})</span>`
+        : p.name;
       html += `<div class="order-item">
-        <span>${p.name}</span>
+        <span>${displayName}</span>
         <div class="qty-controls">
-          <button onclick="removeFromCart('${p.id}')">−</button>
-          <span class="qty">${qty}</span>
-          <button onclick="addToCart('${p.id}')">+</button>
+          <button onclick="removeFromCart('${key}')">−</button>
+          <span class="qty">${item.qty}</span>
+          <button onclick="addToCartFromKey('${key}')">+</button>
         </div>
       </div>`;
     }
@@ -295,11 +333,14 @@ async function processOrder() {
 
     let total = 0;
     const orderItems = [];
-    for (const [id, qty] of Object.entries(cart)) {
-      const p = products.find(x => String(x.id) === String(id));
+    for (const [key, item] of Object.entries(cart)) {
+      const p = products.find(x => String(x.id) === String(item.id));
       if (!p) continue;
-      total += p.price * qty;
-      orderItems.push({ id: p.id, name: p.name, qty, price: p.price });
+      total += p.price * item.qty;
+      const displayName = item.accompaniments.length 
+        ? `${p.name} (Acompañamientos: ${item.accompaniments.join(', ')})`
+        : p.name;
+      orderItems.push({ id: p.id, name: displayName, qty: item.qty, price: p.price });
     }
 
     const { data: order, error: orderErr } = await supabaseClient.from('orders').insert([{
