@@ -3,7 +3,10 @@
 -- Ejecuta esto en Supabase SQL Editor
 -- ============================================================
 
-CREATE TABLE IF NOT EXISTS landing_settings (
+-- Eliminar tabla si ya existía de antes para evitar conflictos de columnas
+DROP TABLE IF EXISTS landing_settings CASCADE;
+
+CREATE TABLE landing_settings (
   id INT PRIMARY KEY DEFAULT 1,
   hero_image_url TEXT DEFAULT 'img/hero_showcase.png',
   admin_image_url TEXT DEFAULT 'img/dashboard_preview.png',
