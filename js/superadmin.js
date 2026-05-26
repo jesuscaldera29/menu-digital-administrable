@@ -313,6 +313,8 @@ async function handleEditClient(e) {
     btn.disabled = false;
     btn.textContent = 'Guardar Cambios';
   }
+}
+
 // ==========================================
 // LÓGICA PARA PERSONALIZAR IMÁGENES DE LANDING
 // ==========================================
