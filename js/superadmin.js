@@ -52,6 +52,7 @@ async function initSuperAdmin() {
   document.getElementById('adminEmailText').textContent = userEmail;
 
   await loadBusinesses();
+  await loadLandingImages();
 }
 
 async function loadBusinesses() {
@@ -311,6 +312,120 @@ async function handleEditClient(e) {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Guardar Cambios';
+  }
+// ==========================================
+// LÓGICA PARA PERSONALIZAR IMÁGENES DE LANDING
+// ==========================================
+
+function previewSelectedImage(event, previewId) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById(previewId).src = e.target.result;
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+async function loadLandingImages() {
+  try {
+    const { data, error } = await supabaseClient
+      .from('landing_settings')
+      .select('*')
+      .eq('id', 1)
+      .single();
+
+    if (error) throw error;
+    if (data) {
+      if (data.hero_image_url) document.getElementById('previewHero').src = data.hero_image_url;
+      if (data.admin_image_url) document.getElementById('previewAdmin').src = data.admin_image_url;
+      if (data.mobile_image_url) document.getElementById('previewMobile').src = data.mobile_image_url;
+      if (data.qr_image_url) document.getElementById('previewQr').src = data.qr_image_url;
+      if (data.fb_pixel_id) document.getElementById('fbPixelInput').value = data.fb_pixel_id;
+    }
+  } catch (err) {
+    console.warn('No se pudieron cargar las imágenes de la landing settings', err);
+  }
+}
+
+async function uploadLandingImage(imageType, inputId, event) {
+  const fileInput = document.getElementById(inputId);
+  const file = fileInput.files[0];
+  if (!file) return showToast('⚠️ Selecciona una imagen primero');
+
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Subiendo...';
+  btn.disabled = true;
+
+  const ext = file.name.split('.').pop();
+  const fileName = `landing_${imageType}_${Date.now()}.${ext}`;
+
+  try {
+    // 1. Subir al storage (bucket public 'images')
+    const { error: uploadErr } = await supabaseClient.storage
+      .from('images')
+      .upload(fileName, file, { upsert: true });
+
+    if (uploadErr) throw uploadErr;
+
+    // 2. Obtener URL pública
+    const { data: urlData } = supabaseClient.storage
+      .from('images')
+      .getPublicUrl(fileName);
+
+    const publicUrl = urlData.publicUrl;
+
+    // 3. Mapear columna según tipo de imagen
+    const columnMap = {
+      hero: 'hero_image_url',
+      admin: 'admin_image_url',
+      mobile: 'mobile_image_url',
+      qr: 'qr_image_url'
+    };
+
+    const updateCol = columnMap[imageType];
+    const updateObj = {};
+    updateObj[updateCol] = publicUrl;
+
+    // 4. Actualizar la tabla landing_settings
+    const { error: updateErr } = await supabaseClient
+      .from('landing_settings')
+      .update(updateObj)
+      .eq('id', 1);
+
+    if (updateErr) throw updateErr;
+
+    showToast('✅ Imagen guardada correctamente');
+  } catch (err) {
+    showToast('❌ Error: ' + err.message);
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
+}
+
+async function saveFBPixel(event) {
+  const pixelId = document.getElementById('fbPixelInput').value.trim();
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Guardando...';
+  btn.disabled = true;
+
+  try {
+    const { error } = await supabaseClient
+      .from('landing_settings')
+      .update({ fb_pixel_id: pixelId })
+      .eq('id', 1);
+
+    if (error) throw error;
+    showToast('✅ Pixel de Facebook guardado correctamente');
+  } catch (err) {
+    showToast('❌ Error: ' + err.message);
+  } finally {
+    btn.textContent = originalText;
+    btn.disabled = false;
   }
 }
 

@@ -74,6 +74,87 @@
         </div>
       </div>
 
+      <!-- SECCIÓN: PERSONALIZAR LANDING PAGE -->
+      <div class="table-container p-8 mb-10">
+        <h2 class="text-2xl font-black mb-2 flex items-center gap-3">🎨 Personalizar Imágenes de la Landing</h2>
+        <p class="text-gray-400 text-sm mb-6">Sube tus propias capturas e imágenes para reemplazar los mockups predeterminados de la landing page.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Hero Image Card -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">1. Hero Showcase (Inicio)</span>
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-black/40 mt-3 border border-white/10 flex items-center justify-center">
+                <img id="previewHero" src="img/hero_showcase.png" class="object-cover w-full h-full">
+              </div>
+            </div>
+            <div class="mt-4">
+              <input type="file" id="fileHero" accept="image/*" class="hidden" onchange="previewSelectedImage(event, 'previewHero')">
+              <label for="fileHero" class="block text-center bg-white/5 hover:bg-white/10 text-white font-semibold py-2 rounded-xl text-xs cursor-pointer border border-white/10 transition-colors">Seleccionar Imagen</label>
+              <button onclick="uploadLandingImage('hero', 'fileHero', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
+            </div>
+          </div>
+          
+          <!-- Admin Preview Card -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">2. Dashboard Admin</span>
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-black/40 mt-3 border border-white/10 flex items-center justify-center">
+                <img id="previewAdmin" src="img/dashboard_preview.png" class="object-cover w-full h-full">
+              </div>
+            </div>
+            <div class="mt-4">
+              <input type="file" id="fileAdmin" accept="image/*" class="hidden" onchange="previewSelectedImage(event, 'previewAdmin')">
+              <label for="fileAdmin" class="block text-center bg-white/5 hover:bg-white/10 text-white font-semibold py-2 rounded-xl text-xs cursor-pointer border border-white/10 transition-colors">Seleccionar Imagen</label>
+              <button onclick="uploadLandingImage('admin', 'fileAdmin', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
+            </div>
+          </div>
+
+          <!-- Mobile Order Card -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">3. Menú Móvil</span>
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-black/40 mt-3 border border-white/10 flex items-center justify-center">
+                <img id="previewMobile" src="img/mobile_order.png" class="object-cover w-full h-full">
+              </div>
+            </div>
+            <div class="mt-4">
+              <input type="file" id="fileMobile" accept="image/*" class="hidden" onchange="previewSelectedImage(event, 'previewMobile')">
+              <label for="fileMobile" class="block text-center bg-white/5 hover:bg-white/10 text-white font-semibold py-2 rounded-xl text-xs cursor-pointer border border-white/10 transition-colors">Seleccionar Imagen</label>
+              <button onclick="uploadLandingImage('mobile', 'fileMobile', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
+            </div>
+          </div>
+
+          <!-- QR Table Card -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">4. QR en Mesa</span>
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-black/40 mt-3 border border-white/10 flex items-center justify-center">
+                <img id="previewQr" src="img/qr_table.png" class="object-cover w-full h-full">
+              </div>
+            </div>
+            <div class="mt-4">
+              <input type="file" id="fileQr" accept="image/*" class="hidden" onchange="previewSelectedImage(event, 'previewQr')">
+              <label for="fileQr" class="block text-center bg-white/5 hover:bg-white/10 text-white font-semibold py-2 rounded-xl text-xs cursor-pointer border border-white/10 transition-colors">Seleccionar Imagen</label>
+              <button onclick="uploadLandingImage('qr', 'fileQr', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: CONFIGURACIÓN DE MARKETING / FACEBOOK PIXEL -->
+      <div class="table-container p-8 mb-10">
+        <h2 class="text-2xl font-black mb-2 flex items-center gap-3">📢 Configuración de Facebook Pixel (Ads)</h2>
+        <p class="text-gray-400 text-sm mb-6">Ingresa el ID de tu píxel de Facebook para rastrear automáticamente las visitas (PageView) y las conversiones a clientes que hacen clic en tu botón de WhatsApp (Contact & Lead).</p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 max-w-xl">
+          <div class="flex-1">
+            <input type="text" id="fbPixelInput" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: 123456789012345">
+          </div>
+          <button onclick="saveFBPixel(event)" class="bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold px-6 py-3 rounded-xl text-sm">Guardar Pixel ID</button>
+        </div>
+      </div>
+
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-black">Directorio de Restaurantes</h2>
         <div class="flex gap-3">

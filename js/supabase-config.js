@@ -23,10 +23,10 @@ function getSlugFromUrl() {
   // Ignorar rutas de archivos estáticos y páginas del sistema
   const systemPaths = ['/', '/index.html', '/admin.html', '/login.html', '/register.html', '/order-status.html'];
   if (systemPaths.includes(path)) return null;
-  
+
   // Ignorar rutas con extensión de archivo
   if (path.includes('.')) return null;
-  
+
   // Limpiar el slash inicial
   const slug = path.replace(/^\//, '').replace(/\/$/, '');
   return slug || null;
@@ -45,7 +45,7 @@ async function getBusinessBySlug(slug) {
       .select('*')
       .eq('slug', slug)
       .single();
-    
+
     if (error) return null;
     return data;
   } catch (err) {
