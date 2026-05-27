@@ -16,6 +16,9 @@
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
+  <!-- AOS Animation CSS -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  
   <style>
     :root {
       --primary-gradient: linear-gradient(135deg, #ff5f6d 0%, #ffc371 100%);
@@ -77,7 +80,7 @@
     }
     
     .btn-gradient:hover {
-      transform: translateY(-2px);
+      transform: translateY(-2px) scale(1.05);
       box-shadow: 0 15px 40px rgba(255, 95, 109, 0.35);
     }
     
@@ -154,19 +157,19 @@
   <section class="min-h-screen flex items-center pt-28 pb-16 px-6 relative">
     <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
       <div class="lg:col-span-6 space-y-6">
-        <div class="inline-block bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-full px-4 py-2 text-xs font-extrabold text-orange-400 uppercase tracking-widest">
+        <div data-aos="fade-right" class="inline-block bg-gradient-to-r from-red-500/10 to-orange-500/10 border border-red-500/20 rounded-full px-4 py-2 text-xs font-extrabold text-orange-400 uppercase tracking-widest">
           ✨ MENÚ Y ADMINISTRACIÓN EN TIEMPO REAL
         </div>
-        <h1 class="text-4xl md:text-6xl font-black leading-[1.1] tracking-tight">
+        <h1 data-aos="fade-right" data-aos-delay="100" class="text-4xl md:text-6xl font-black leading-[1.1] tracking-tight">
           Tu menú digital <br>
           <span class="bg-gradient-to-r from-red-500 to-orange-400 bg-clip-text text-transparent">profesional</span> y autoadministrable
         </h1>
-        <p class="text-gray-400 text-lg leading-relaxed max-w-lg">
+        <p data-aos="fade-right" data-aos-delay="200" class="text-gray-400 text-lg leading-relaxed max-w-lg">
           Permite que tus clientes pidan cómodamente desde su móvil. Recibe las comandas directo en tu WhatsApp e instántaneamente en tu panel de administración. Todo sincronizado.
         </p>
         
-        <div class="flex flex-col sm:flex-row gap-4 pt-2">
-          <a href="#" onclick="openLeadModal(event)" class="btn-gradient text-center px-8 py-4.5 rounded-2xl text-lg flex items-center justify-center gap-2">
+        <div data-aos="fade-up" data-aos-delay="300" class="flex flex-col sm:flex-row gap-4 pt-2">
+          <a href="#" onclick="openLeadModal(event)" class="btn-gradient animate-pulse hover:animate-none text-center px-8 py-4.5 rounded-2xl text-lg flex items-center justify-center gap-2">
             🚀 Crear Mi Menú Ahora
           </a>
           <a href="#interconexion" class="px-8 py-4.5 rounded-2xl font-bold text-gray-400 hover:text-white transition-colors border border-white/10 hover:border-white/20 text-center text-lg flex items-center justify-center gap-2">
@@ -206,42 +209,42 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <!-- Feature 1 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="0" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center text-2xl mb-6">📱</div>
           <h3 class="text-xl font-bold mb-3">Menú Digital Premium</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Catálogo interactivo optimizado para móviles. Categorías, fotos vibrantes de tus platos y precios siempre actualizados al instante.</p>
         </div>
 
         <!-- Feature 2 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="100" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center justify-center text-2xl mb-6">📲</div>
           <h3 class="text-xl font-bold mb-3">Pedidos a WhatsApp</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Los pedidos de tus clientes se estructuran automáticamente y se envían a tu celular con un solo clic. Rápido y sin errores.</p>
         </div>
 
         <!-- Feature 3 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="200" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-2xl mb-6">👨‍🍳</div>
           <h3 class="text-xl font-bold mb-3">Administración Web</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Gestiona tu menú, añade categorías, activa o desactiva productos en segundos y controla todos tus pedidos en tiempo real.</p>
         </div>
 
         <!-- Feature 4 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="300" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-green-500/10 border border-green-500/20 flex items-center justify-center text-2xl mb-6">📊</div>
           <h3 class="text-xl font-bold mb-3">Reportes y Estadísticas</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Visualiza el resumen de ventas del período, conteo de pedidos y tu ticket promedio directamente en tu panel administrativo.</p>
         </div>
 
         <!-- Feature 5 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="400" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl mb-6">🖨️</div>
           <h3 class="text-xl font-bold mb-3">QR para Mesas</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Genera códigos QR específicos para cada mesa de tu local. El cliente escanea, pide y tú sabes exactamente de qué mesa viene.</p>
         </div>
 
         <!-- Feature 6 -->
-        <div class="feature-card">
+        <div data-aos="fade-up" data-aos-delay="500" class="feature-card">
           <div class="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center text-2xl mb-6">📢</div>
           <h3 class="text-xl font-bold mb-3">Generador de Posts</h3>
           <p class="text-gray-400 text-sm leading-relaxed">Crea posts publicitarios listos para tus redes sociales a partir de tus productos con un solo clic. Promociona tus ofertas fácilmente.</p>
@@ -260,7 +263,7 @@
 
       <!-- Preview 1: Admin Dashboard -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center mb-24">
-        <div class="lg:col-span-5 space-y-6 order-2 lg:order-1">
+        <div data-aos="fade-right" class="lg:col-span-5 space-y-6 order-2 lg:order-1">
           <div class="w-12 h-12 rounded-xl bg-orange-500/10 flex items-center justify-center text-xl">📊</div>
           <h3 class="text-2xl md:text-3xl font-black">Panel de control autoadministrable</h3>
           <p class="text-gray-400 leading-relaxed">
@@ -272,17 +275,17 @@
             <li class="flex items-center gap-3"><span class="text-green-500">✓</span> Base de datos de clientes automatizada</li>
           </ul>
         </div>
-        <div class="lg:col-span-7 flex justify-center order-1 lg:order-2">
+        <div data-aos="fade-left" class="lg:col-span-7 flex justify-center order-1 lg:order-2">
           <img id="adminImage" src="img/dashboard_preview.png" alt="MenuPro Admin Panel" class="mockup-shadow rounded-2xl border border-white/5 max-w-full">
         </div>
       </div>
 
       <!-- Preview 2: Mobile Menu & WhatsApp Checkout -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-        <div class="lg:col-span-7 flex justify-center">
+        <div data-aos="fade-right" class="lg:col-span-7 flex justify-center">
           <img id="mobileImage" src="img/mobile_order.png" alt="MenuPro Mobile" class="mockup-shadow rounded-2xl border border-white/5 max-w-full float-anim" style="animation-delay: 0.5s">
         </div>
-        <div class="lg:col-span-5 space-y-6">
+        <div data-aos="fade-left" class="lg:col-span-5 space-y-6">
           <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-xl">📱</div>
           <h3 class="text-2xl md:text-3xl font-black">Pedidos del cliente directo a tu mesa</h3>
           <p class="text-gray-400 leading-relaxed">
@@ -458,12 +461,12 @@
   <!-- CTA FINAL -->
   <section class="py-24 px-6 relative z-10 border-t border-white/5 bg-black/40">
     <div class="max-w-4xl mx-auto text-center">
-      <div class="feature-card !p-16 !rounded-[36px]" style="background: linear-gradient(135deg, rgba(255, 95, 109, 0.08) 0%, rgba(255, 195, 113, 0.08) 100%)">
+      <div data-aos="zoom-in" class="feature-card !p-16 !rounded-[36px]" style="background: linear-gradient(135deg, rgba(255, 95, 109, 0.08) 0%, rgba(255, 195, 113, 0.08) 100%)">
         <h2 class="text-3xl md:text-5xl font-black mb-4">¿Listo para llevar tu menú al siguiente nivel?</h2>
         <p class="text-gray-400 text-lg mb-6 max-w-xl mx-auto">Digitaliza tu carta, recibe comandos directo en WhatsApp y controla tu negocio como un profesional.</p>
         
         <div class="mb-8 p-6 rounded-3xl bg-white/5 border border-white/10 inline-block shadow-lg relative overflow-hidden">
-          <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-widest animate-pulse z-10">
+          <div class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-black px-3 py-1 rounded-bl-lg uppercase tracking-widest animate-pulse z-10" id="displaySpotsLeft">
             🔥 Solo 3 cupos restantes
           </div>
           <p class="text-orange-400 text-sm font-black uppercase tracking-widest mb-2 mt-3">Pago Único (Sin Mensualidades)</p>
@@ -474,7 +477,7 @@
           <p class="text-xs text-gray-400 mt-3 font-semibold">* Incluye instalación y configuración completa.</p>
         </div>
         <br>
-        <a href="#" onclick="openLeadModal(event)" class="btn-gradient text-lg px-10 py-5 rounded-2xl inline-flex items-center gap-2">
+        <a href="#" onclick="openLeadModal(event)" class="btn-gradient animate-pulse hover:animate-none text-lg px-10 py-5 rounded-2xl inline-flex items-center gap-2">
           🚀 Pedir Mi Menú en WhatsApp
         </a>
         <div class="mt-6 flex items-center justify-center gap-2 text-gray-400">
@@ -523,6 +526,7 @@
     }
 
     let landingWhatsAppNumber = '573015027933';
+    let globalCurrentPrice = '$49';
 
     document.addEventListener('DOMContentLoaded', async () => {
       try {
@@ -545,7 +549,10 @@
             document.getElementById('displayOldPrice').textContent = data.price_old.includes('$') ? data.price_old : '$' + data.price_old;
           }
           if (data.price_current) {
-            document.getElementById('displayCurrentPrice').textContent = data.price_current.includes('$') ? data.price_current : '$' + data.price_current;
+            globalCurrentPrice = data.price_current.includes('$') ? data.price_current : '$' + data.price_current;
+            document.getElementById('displayCurrentPrice').textContent = globalCurrentPrice;
+            const modalPrice = document.getElementById('modalPriceDisplay');
+            if (modalPrice) modalPrice.textContent = globalCurrentPrice;
           }
           if (data.spots_left) {
             const spotsEl = document.getElementById('displaySpotsLeft');
@@ -573,10 +580,8 @@
     function submitLead(e) {
       e.preventDefault();
       const biz = document.getElementById('leadBizName').value;
-      const email = document.getElementById('leadEmail').value;
-      const pass = document.getElementById('leadPassword').value;
       
-      let msg = `Hola! Quiero mi menú digital.\nMis datos de registro son:\n\n🏪 *Negocio:* ${biz}\n📧 *Correo:* ${email}\n🔑 *Clave:* ${pass}\n\nQuedo atento para la activación.`;
+      let msg = `Hola! Quiero mi menú digital.\nMi negocio es: *${biz}*\n\nQuedo atento para realizar el pago de ${globalCurrentPrice} y comenzar la activación.`;
       
       window.open(`https://wa.me/${landingWhatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
       closeLeadModal();
@@ -597,24 +602,21 @@
         <h3 class="text-xl font-black text-white">¡Empecemos tu Menú!</h3>
         <button onclick="closeLeadModal()" class="text-gray-400 hover:text-white">✕</button>
       </div>
-      <p class="text-gray-400 text-sm mb-6">Completa estos datos para crear tu cuenta. Serás redirigido a WhatsApp para activar tu sistema inmediatamente.</p>
+      <p class="text-gray-400 text-sm mb-4">Ingresa el nombre de tu negocio para continuar. Nos contactaremos por WhatsApp para activar tu sistema.</p>
+      
+      <div class="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
+        <p class="text-gray-300 text-sm">Pago Único (Sin mensualidades)</p>
+        <p class="text-3xl font-black text-white mt-1" id="modalPriceDisplay">$49</p>
+      </div>
       
       <form id="leadForm" onsubmit="submitLead(event)" class="space-y-4">
         <div>
           <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Nombre de tu Negocio</label>
           <input type="text" id="leadBizName" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: La Pizzería" required>
         </div>
-        <div>
-          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Correo Electrónico</label>
-          <input type="email" id="leadEmail" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="tu@correo.com" required>
-        </div>
-        <div>
-          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Crea una Contraseña</label>
-          <input type="password" id="leadPassword" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Para entrar a tu panel" required>
-        </div>
         <button type="submit" class="w-full mt-4 bg-[#25D366] text-white font-bold py-3.5 rounded-xl hover:bg-[#1ebd5a] transition-colors flex justify-center items-center gap-2">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-5.824 4.74-10.563 10.564-10.563 5.826 0 10.564 4.741 10.564 10.564 0 5.824-4.74 10.564-10.563 10.563z"/></svg>
-          Enviar Datos por WhatsApp
+          Enviar y Pagar por WhatsApp
         </button>
       </form>
     </div>
@@ -629,5 +631,15 @@
       <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-5.824 4.74-10.563 10.564-10.563 5.826 0 10.564 4.741 10.564 10.564 0 5.824-4.74 10.564-10.563 10.563z"/></svg>
     </div>
   </a>
+
+  <!-- AOS Script -->
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true,
+      offset: 100,
+    });
+  </script>
 </body>
 </html>
