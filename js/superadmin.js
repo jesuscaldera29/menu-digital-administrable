@@ -344,6 +344,7 @@ async function loadLandingImages() {
       if (data.admin_image_url) document.getElementById('previewAdmin').src = data.admin_image_url;
       if (data.mobile_image_url) document.getElementById('previewMobile').src = data.mobile_image_url;
       if (data.qr_image_url) document.getElementById('previewQr').src = data.qr_image_url;
+      if (data.developer_image_url) document.getElementById('previewDeveloper').src = data.developer_image_url;
       if (data.fb_pixel_id) document.getElementById('fbPixelInput').value = data.fb_pixel_id;
       if (data.price_old) document.getElementById('priceOldInput').value = data.price_old;
       if (data.price_current) document.getElementById('priceCurrentInput').value = data.price_current;
@@ -388,7 +389,8 @@ async function uploadLandingImage(imageType, inputId, event) {
       hero: 'hero_image_url',
       admin: 'admin_image_url',
       mobile: 'mobile_image_url',
-      qr: 'qr_image_url'
+      qr: 'qr_image_url',
+      developer: 'developer_image_url'
     };
 
     const updateCol = columnMap[imageType];

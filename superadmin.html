@@ -139,6 +139,21 @@
               <button onclick="uploadLandingImage('qr', 'fileQr', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
             </div>
           </div>
+
+          <!-- Developer Preview Card -->
+          <div class="bg-black/20 border border-white/5 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-orange-400">5. Foto Desarrollador</span>
+              <div class="w-full h-40 rounded-xl overflow-hidden bg-black/40 mt-3 border border-white/10 flex items-center justify-center">
+                <img id="previewDeveloper" src="https://ui-avatars.com/api/?name=Dev&background=ff5f6d&color=fff&size=200" class="object-cover w-24 h-24 rounded-full">
+              </div>
+            </div>
+            <div class="mt-4">
+              <input type="file" id="fileDeveloper" accept="image/*" class="hidden" onchange="previewSelectedImage(event, 'previewDeveloper')">
+              <label for="fileDeveloper" class="block text-center bg-white/5 hover:bg-white/10 text-white font-semibold py-2 rounded-xl text-xs cursor-pointer border border-white/10 transition-colors">Seleccionar Imagen</label>
+              <button onclick="uploadLandingImage('developer', 'fileDeveloper', event)" class="w-full mt-2 bg-gradient-to-r from-red-500 to-orange-500 hover:scale-[1.02] transition-transform text-white font-bold py-2.5 rounded-xl text-xs">Guardar Cambios</button>
+            </div>
+          </div>
         </div>
       </div>
 

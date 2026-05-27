@@ -402,6 +402,32 @@
     </div>
   </section>
 
+  <!-- DESARROLLADOR -->
+  <section id="desarrollador" class="py-24 px-6 relative border-t border-white/5 bg-black/40">
+    <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center gap-12 bg-white/5 border border-white/10 p-8 md:p-12 rounded-[36px] shadow-2xl relative overflow-hidden">
+      <!-- Glow effect inside -->
+      <div class="absolute -top-32 -left-32 w-64 h-64 bg-red-500/20 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-32 -right-32 w-64 h-64 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="w-48 h-48 md:w-64 md:h-64 shrink-0 relative z-10" data-aos="zoom-in">
+        <img id="developerImage" src="https://ui-avatars.com/api/?name=Dev&background=ff5f6d&color=fff&size=200" alt="Profesional en Mercadeo Digital" class="w-full h-full object-cover rounded-full border-4 border-white/10 shadow-2xl">
+      </div>
+      
+      <div class="space-y-4 text-center md:text-left relative z-10" data-aos="fade-left">
+        <div class="inline-block bg-orange-500/10 border border-orange-500/20 px-3 py-1 rounded-full text-xs font-bold text-orange-400 uppercase tracking-widest">
+          Profesional en Mercadeo Digital
+        </div>
+        <h2 class="text-3xl md:text-4xl font-black">Tu negocio en manos de expertos</h2>
+        <p class="text-gray-400 leading-relaxed text-sm md:text-base">
+          MenuPro no es solo una herramienta, es una estrategia. Está diseñada por profesionales en mercadeo digital y desarrollo de software con el único propósito de aumentar tus conversiones y simplificar tu operación diaria.
+        </p>
+        <p class="text-gray-400 leading-relaxed text-sm md:text-base font-semibold">
+          Nos encargamos de que tu menú no solo se vea bien, sino que esté optimizado para vender más y brindarle una experiencia premium a tus clientes.
+        </p>
+      </div>
+    </div>
+  </section>
+
   <!-- FAQ (PREGUNTAS) -->
   <section id="faq" class="py-24 px-6 border-t border-white/5">
     <div class="max-w-3xl mx-auto">
@@ -541,6 +567,10 @@
           if (data.admin_image_url) document.getElementById('adminImage').src = data.admin_image_url;
           if (data.mobile_image_url) document.getElementById('mobileImage').src = data.mobile_image_url;
           if (data.qr_image_url) document.getElementById('qrImage').src = data.qr_image_url;
+          if (data.developer_image_url) {
+            const devImg = document.getElementById('developerImage');
+            if (devImg) devImg.src = data.developer_image_url;
+          }
           
           if (data.fb_pixel_id) {
             initFBPixel(data.fb_pixel_id);
