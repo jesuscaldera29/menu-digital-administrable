@@ -551,8 +551,6 @@
           if (data.price_current) {
             globalCurrentPrice = data.price_current.includes('$') ? data.price_current : '$' + data.price_current;
             document.getElementById('displayCurrentPrice').textContent = globalCurrentPrice;
-            const modalPrice = document.getElementById('modalPriceDisplay');
-            if (modalPrice) modalPrice.textContent = globalCurrentPrice;
           }
           if (data.spots_left) {
             const spotsEl = document.getElementById('displaySpotsLeft');
@@ -602,21 +600,16 @@
         <h3 class="text-xl font-black text-white">¡Empecemos tu Menú!</h3>
         <button onclick="closeLeadModal()" class="text-gray-400 hover:text-white">✕</button>
       </div>
-      <p class="text-gray-400 text-sm mb-4">Ingresa el nombre de tu negocio para continuar. Nos contactaremos por WhatsApp para activar tu sistema.</p>
+      <p class="text-gray-400 text-sm mb-6">Ingresa el nombre de tu negocio para continuar. Nos contactaremos por WhatsApp para darte toda la información y activar tu sistema.</p>
       
-      <div class="mb-6 p-4 rounded-xl bg-orange-500/10 border border-orange-500/20 text-center">
-        <p class="text-gray-300 text-sm">Pago Único (Sin mensualidades)</p>
-        <p class="text-3xl font-black text-white mt-1" id="modalPriceDisplay">$49</p>
-      </div>
-      
-      <form id="leadForm" onsubmit="submitLead(event)" class="space-y-4">
+      <form id="leadForm" onsubmit="submitLead(event)" class="space-y-5">
         <div>
-          <label class="text-gray-400 text-xs font-bold uppercase block mb-1">Nombre de tu Negocio</label>
-          <input type="text" id="leadBizName" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm outline-none focus:border-orange-500" placeholder="Ej: La Pizzería" required>
+          <label class="text-gray-400 text-xs font-bold uppercase block mb-2">Nombre de tu Negocio</label>
+          <input type="text" id="leadBizName" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 text-white text-sm outline-none focus:border-orange-500 focus:bg-white/10 transition-all shadow-inner" placeholder="Ej: La Pizzería" required>
         </div>
-        <button type="submit" class="w-full mt-4 bg-[#25D366] text-white font-bold py-3.5 rounded-xl hover:bg-[#1ebd5a] transition-colors flex justify-center items-center gap-2">
+        <button type="submit" class="w-full mt-2 bg-gradient-to-r from-[#25D366] to-[#128C7E] shadow-lg shadow-green-500/20 text-white font-black py-4 rounded-xl hover:scale-[1.02] active:scale-95 transition-all flex justify-center items-center gap-2 text-sm uppercase tracking-wide">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.099.824zm-3.423-14.416c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm.029 18.88c-1.161 0-2.305-.292-3.318-.844l-3.677.964.984-3.595c-.607-1.052-.927-2.246-.926-3.468.001-5.824 4.74-10.563 10.564-10.563 5.826 0 10.564 4.741 10.564 10.564 0 5.824-4.74 10.564-10.563 10.563z"/></svg>
-          Enviar y Pagar por WhatsApp
+          Activar mi menú
         </button>
       </form>
     </div>
