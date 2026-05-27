@@ -205,6 +205,9 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
   </style>
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -433,11 +436,16 @@
             <input type="date" id="reportStartDate" class="input !mt-0 !py-2 !px-4 !text-sm">
             <span class="text-gray-400">a</span>
             <input type="date" id="reportEndDate" class="input !mt-0 !py-2 !px-4 !text-sm">
-            <button onclick="generateReport()" class="btn btn-primary !w-auto !py-2 !px-6 !text-sm">Filtrar</button>
+            <button onclick="generateReport()" class="btn btn-primary !w-auto !py-2 !px-6 !text-sm">Generar</button>
+            <button onclick="downloadReportCSV()" class="btn bg-green-600 text-white !w-auto !py-2 !px-6 !text-sm">📥 Descargar CSV</button>
           </div>
         </div>
-        <div id="reportSummary" class="text-center py-10 text-gray-400 font-bold">
+        <div id="reportSummary" class="text-center py-4 text-gray-400 font-bold">
           Selecciona un rango de fechas para ver los resultados
+        </div>
+        
+        <div class="mt-8" style="position: relative; height:40vh; width:100%">
+          <canvas id="salesChart"></canvas>
         </div>
       </div>
     </div>
@@ -680,6 +688,9 @@
       });
     }
   </script>
+  
+  <!-- Audio de Notificación -->
+  <audio id="notificationSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 </body>
 
 </html>

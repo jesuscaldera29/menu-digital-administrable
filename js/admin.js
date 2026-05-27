@@ -4,6 +4,9 @@ let allOrders = [];
 let currentOrderFilter = 'Todos';
 let businessId = null;
 let businessSlug = null;
+let lastPendingCount = 0;
+let salesChartInstance = null;
+let currentReportData = [];
 
 // Toast notification
 function showToast(msg, type = 'success') {
@@ -41,7 +44,42 @@ async function initAdmin() {
     // Update menu link
     const menuLink = document.querySelector('a[href="index.html"]');
     if (menuLink) { menuLink.href = '/' + biz.slug; menuLink.innerHTML = '📱 Ver Menú'; }
+    
+    // Iniciar auto-polling de pedidos cada 15 segundos
+    setInterval(pollNewOrders, 15000);
+    pollNewOrders(); // Primera carga silenciosa
+    
     return true;
+}
+
+// Polling for new orders
+async function pollNewOrders() {
+    if (!businessId) return;
+    try {
+        const { data, error } = await supabaseClient.from('orders').select('*').eq('business_id', businessId).order('created_at', { ascending: false });
+        if (error) return;
+        
+        allOrders = data || [];
+        const currentPending = allOrders.filter(o => !o.status || o.status === 'Pendiente').length;
+        
+        if (currentPending > lastPendingCount) {
+            // ¡Nuevo pedido!
+            const audio = document.getElementById('notificationSound');
+            if (audio) {
+                audio.play().catch(e => console.warn('Audio auto-play bloqueado por el navegador', e));
+            }
+            showToast('🔔 ¡NUEVO PEDIDO RECIBIDO!', 'success');
+        }
+        lastPendingCount = currentPending;
+        
+        // Si estamos en la pestaña de pedidos, actualizamos visualmente
+        const sectionOrders = document.getElementById('section-orders');
+        if (sectionOrders && sectionOrders.classList.contains('active')) {
+            renderOrders();
+        }
+    } catch (err) {
+        console.error('Error polling:', err);
+    }
 }
 
 // PREVIEW IMAGE
@@ -546,7 +584,12 @@ function renderOrders() {
                 <td class="text-xs">${new Date(o.created_at).toLocaleString()}</td>
                 <td class="font-black">$${Number(o.total).toLocaleString()}</td>
                 <td><span class="text-[10px] bg-gray-100 px-2 py-1 rounded-full font-bold uppercase">${o.payment_method}</span></td>
-                <td>${getStatusBadge(status)}</td>
+                <td>
+                    ${getStatusBadge(status)}
+                    <div class="mt-2 w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                        ${getProgressBar(status)}
+                    </div>
+                </td>
                 <td>
                     <div class="flex items-center gap-2">
                         <select onchange="updateOrderStatus(${o.id}, this.value)" class="bg-gray-50 border border-gray-250 text-gray-950 text-xs font-bold rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-orange-500">
@@ -577,6 +620,19 @@ function getStatusBadge(status) {
         default:
             return `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-800">⏳ Pendiente</span>`;
     }
+}
+
+// Get progress bar HTML
+function getProgressBar(status) {
+    status = status || 'Pendiente';
+    let width = '25%';
+    let color = 'bg-yellow-400';
+    
+    if (status === 'Confirmado') { width = '50%'; color = 'bg-blue-500'; }
+    if (status === 'Preparando') { width = '75%'; color = 'bg-purple-500'; }
+    if (status === 'Entregado') { width = '100%'; color = 'bg-green-500'; }
+    
+    return `<div class="h-1.5 ${color} transition-all duration-500" style="width: ${width}"></div>`;
 }
 
 // Filter orders by status tab
@@ -767,6 +823,7 @@ async function generateReport() {
         let totalSales = 0;
         let orderCount = data.length;
         
+        currentReportData = data;
         data.forEach(o => totalSales += Number(o.total));
 
         document.getElementById('reportTotalSales').textContent = `$${totalSales.toLocaleString()}`;
@@ -776,6 +833,7 @@ async function generateReport() {
         const summaryContainer = document.getElementById('reportSummary');
         if (orderCount === 0) {
             summaryContainer.innerHTML = 'No hubo ventas en este período 😕';
+            if (salesChartInstance) salesChartInstance.destroy();
         } else {
             summaryContainer.innerHTML = `
                 <div class="text-black">
@@ -783,10 +841,90 @@ async function generateReport() {
                     <p class="mt-2 text-gray-500">Se han procesado correctamente todos los registros en el sistema.</p>
                 </div>
             `;
+            renderSalesChart(data);
         }
     } catch (err) {
         showToast('Error generando reporte', 'error');
     }
+}
+
+// Renderizar gráfica de Chart.js
+function renderSalesChart(data) {
+    const ctx = document.getElementById('salesChart');
+    if (!ctx) return;
+    
+    // Agrupar ventas por día
+    const salesByDay = {};
+    data.forEach(o => {
+        const dateStr = o.created_at.split('T')[0];
+        if (!salesByDay[dateStr]) salesByDay[dateStr] = 0;
+        salesByDay[dateStr] += Number(o.total);
+    });
+    
+    const sortedDates = Object.keys(salesByDay).sort();
+    const labels = sortedDates.map(d => new Date(d).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
+    const values = sortedDates.map(d => salesByDay[d]);
+
+    if (salesChartInstance) {
+        salesChartInstance.destroy();
+    }
+
+    salesChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Ventas por Día ($)',
+                data: values,
+                backgroundColor: 'rgba(255, 95, 109, 0.8)',
+                borderColor: 'rgba(255, 95, 109, 1)',
+                borderWidth: 1,
+                borderRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+}
+
+// Descargar Reporte CSV
+function downloadReportCSV() {
+    if (!currentReportData || currentReportData.length === 0) {
+        return showToast('⚠️ No hay datos para descargar en el rango actual', 'error');
+    }
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "ID,Fecha,Cliente,WhatsApp,Metodo Pago,Metodo Entrega,Estado,Total\n";
+
+    currentReportData.forEach(function(row) {
+        const id = row.id;
+        const fecha = new Date(row.created_at).toLocaleString();
+        const cliente = `"${row.customer_name || ''}"`;
+        const telefono = row.customer_phone || '';
+        const metodoPago = row.payment_method || '';
+        const metodoEntrega = row.delivery_method || '';
+        const estado = row.status || '';
+        const total = row.total || 0;
+        
+        csvContent += `${id},${fecha},${cliente},${telefono},${metodoPago},${metodoEntrega},${estado},${total}\n`;
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `reporte_ventas_${new Date().getTime()}.csv`);
+    document.body.appendChild(link); // Required for FF
+    link.click();
+    document.body.removeChild(link);
 }
 
 // SALES POST GENERATOR
