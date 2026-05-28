@@ -569,14 +569,6 @@
       'https://connect.facebook.net/en_US/fbevents.js');
       fbq('init', pixelId);
       fbq('track', 'PageView');
-      
-      // Track clicks on all links containing wa.me (WhatsApp)
-      document.querySelectorAll('a[href*="wa.me"]').forEach(link => {
-        link.addEventListener('click', () => {
-          fbq('track', 'Contact', { content_name: 'WhatsApp CTA Click' });
-          fbq('track', 'Lead', { content_name: 'WhatsApp Lead Conversion' });
-        });
-      });
     }
 
     let landingWhatsAppNumber = '573015027933';
@@ -647,6 +639,11 @@
       }
       msg += `Quedo atento para recibir más información y comenzar la activación.`;
       
+      // FB Pixel tracking
+      if (typeof fbq === 'function') {
+        fbq('track', 'Lead', { content_name: 'WhatsApp Lead Conversion' });
+      }
+      
       window.open(`https://wa.me/${landingWhatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
       closeLeadModal();
     }
@@ -654,19 +651,25 @@
     function contactWhatsApp(e) {
       e.preventDefault();
       let msg = `Hola! Tengo dudas sobre MenuPro.`;
+      
+      // FB Pixel tracking
+      if (typeof fbq === 'function') {
+        fbq('track', 'Contact', { content_name: 'WhatsApp CTA Click' });
+      }
+
       window.open(`https://wa.me/${landingWhatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
     }
   </script>
 
   <!-- MODAL DE REGISTRO (LEAD) -->
-  <div id="leadModal" class="hidden fixed inset-0 z-[999] flex items-center justify-center">
+  <div id="leadModal" class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeLeadModal()"></div>
-    <div class="relative bg-[#111] border border-white/10 rounded-3xl p-8 w-full max-w-md shadow-2xl mx-4">
-      <div class="flex justify-between items-center mb-6">
+    <div class="relative bg-[#111] border border-white/10 rounded-3xl p-6 md:p-8 w-full max-w-md shadow-2xl max-h-[90vh] overflow-y-auto flex flex-col">
+      <div class="flex justify-between items-center mb-4 md:mb-6 shrink-0">
         <h3 class="text-xl font-black text-white">¡Empecemos tu Menú!</h3>
-        <button onclick="closeLeadModal()" class="text-gray-400 hover:text-white">✕</button>
+        <button onclick="closeLeadModal()" class="text-gray-400 hover:text-white p-2 -mr-2">✕</button>
       </div>
-      <p class="text-gray-400 text-sm mb-6">Ingresa el nombre de tu negocio para continuar. Nos contactaremos por WhatsApp para darte toda la información y activar tu sistema.</p>
+      <p class="text-gray-400 text-xs md:text-sm mb-6 shrink-0">Ingresa el nombre de tu negocio para continuar. Nos contactaremos por WhatsApp para darte toda la información y activar tu sistema.</p>
       
       <form id="leadForm" onsubmit="submitLead(event)" class="space-y-4">
         <div>
