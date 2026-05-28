@@ -346,6 +346,7 @@ async function loadLandingImages() {
       if (data.qr_image_url) document.getElementById('previewQr').src = data.qr_image_url;
       if (data.developer_image_url) document.getElementById('previewDeveloper').src = data.developer_image_url;
       if (data.fb_pixel_id) document.getElementById('fbPixelInput').value = data.fb_pixel_id;
+      if (data.fb_api_token) document.getElementById('fbApiTokenInput').value = data.fb_api_token;
       if (data.price_old) document.getElementById('priceOldInput').value = data.price_old;
       if (data.price_current) document.getElementById('priceCurrentInput').value = data.price_current;
       if (data.spots_left) document.getElementById('spotsLeftInput').value = data.spots_left;
@@ -414,8 +415,9 @@ async function uploadLandingImage(imageType, inputId, event) {
   }
 }
 
-async function saveFBPixel(event) {
+async function saveFBConfig(event) {
   const pixelId = document.getElementById('fbPixelInput').value.trim();
+  const apiToken = document.getElementById('fbApiTokenInput').value.trim();
   const btn = event.target;
   const originalText = btn.textContent;
   btn.textContent = '⏳ Guardando...';
@@ -424,13 +426,18 @@ async function saveFBPixel(event) {
   try {
     const { error } = await supabaseClient
       .from('landing_settings')
-      .update({ fb_pixel_id: pixelId })
+      .update({ fb_pixel_id: pixelId, fb_api_token: apiToken })
       .eq('id', 1);
 
+    // Si la columna fb_api_token no existe en Supabase, esto dará un error.
     if (error) throw error;
-    showToast('✅ Pixel de Facebook guardado correctamente');
+    showToast('✅ Configuración de Facebook guardada correctamente');
   } catch (err) {
-    showToast('❌ Error: ' + err.message);
+    if (err.code === 'PGRST204') {
+        showToast('❌ Error: Asegúrate de añadir la columna fb_api_token a landing_settings en Supabase');
+    } else {
+        showToast('❌ Error: ' + err.message);
+    }
   } finally {
     btn.textContent = originalText;
     btn.disabled = false;
