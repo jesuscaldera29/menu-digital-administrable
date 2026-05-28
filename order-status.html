@@ -232,7 +232,7 @@
             
             if (notificationsEnabled && Notification.permission === "granted") {
                 new Notification("¡Tu pedido se ha actualizado!", {
-                    body: \`El nuevo estado de tu pedido es: \${newStatus}\`,
+                    body: `El nuevo estado de tu pedido es: ${newStatus}`,
                     icon: "https://ui-avatars.com/api/?name=MP&background=ea580c&color=fff"
                 });
             }
