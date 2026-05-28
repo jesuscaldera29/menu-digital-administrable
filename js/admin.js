@@ -249,17 +249,62 @@ function generateQRs() {
     const container = document.getElementById('qrContainer');
     container.innerHTML = ''; // Limpiar anteriores
 
+    // Plantilla base HTML del diseño de tarjeta
+    const createCardHTML = (id, labelText) => `
+      <div id="${id}-wrapper" class="bg-[#2a2d34] text-white p-6 flex flex-col items-center justify-between relative overflow-hidden shrink-0 mx-auto w-[280px]" style="border-radius: 12px; font-family: 'Outfit', sans-serif; aspect-ratio: 1/1.6; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
+        <div class="text-center mt-6 w-full">
+          <p class="text-[17px] font-medium tracking-[0.1em] leading-tight text-gray-200">MENÚ DIGITAL:</p>
+          <h2 class="text-[22px] font-bold tracking-wider leading-tight mt-1">PIDA SU PEDIDO</h2>
+        </div>
+        
+        <div class="bg-white p-3 rounded-xl shadow-inner my-6 flex items-center justify-center" id="${id}"></div>
+        
+        <div class="text-center w-full mb-4">
+          <p class="text-[10px] tracking-[0.15em] font-medium uppercase mb-6 opacity-90 text-center">Pida su pedido: Escanee el código</p>
+          
+          <div class="flex justify-center gap-7 opacity-80">
+            <div class="flex flex-col items-center gap-1.5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+              <span class="text-[10px]">Phone</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+              <span class="text-[10px]">QR</span>
+            </div>
+            <div class="flex flex-col items-center gap-1.5">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path></svg>
+              <span class="text-[10px]">WiFi</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="absolute bottom-3 right-3 opacity-30">
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0l2 9 9 2-9 2-2 9-2-9-9-2 9-2z"/></svg>
+        </div>
+        <div class="absolute top-3 left-4 opacity-40 text-[10px] font-bold tracking-widest">
+           ${labelText}
+        </div>
+      </div>
+      <!-- Buttons -->
+      <div class="mt-4 flex justify-center w-[280px] print:hidden">
+        <button class="bg-[#2a2d34] text-white px-4 py-3 w-full rounded-xl text-xs font-bold shadow-md hover:bg-black transition flex items-center justify-center gap-2" onclick="downloadQRImage('${id}-wrapper', '${labelText.replace(' ', '-')}')">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          Descargar QR ${labelText}
+        </button>
+      </div>
+    `;
+
     // 1. QR General (Directo a la página del cliente)
     const qrGeneralCard = document.createElement('div');
-    qrGeneralCard.className = 'qr-card';
-    qrGeneralCard.innerHTML = `<h3>Menú Digital (Local)</h3><div id="qr-general"></div><p class="mt-2 text-sm text-gray-500">Escanea para ver el menú</p>`;
+    qrGeneralCard.className = 'flex flex-col items-center break-inside-avoid mb-6';
+    qrGeneralCard.innerHTML = createCardHTML('qr-general', 'GENERAL');
     container.appendChild(qrGeneralCard);
 
     new QRCode(document.getElementById('qr-general'), {
         text: menuUrl,
-        width: 200,
-        height: 200,
-        colorDark : "#000000",
+        width: 170,
+        height: 170,
+        colorDark : "#1a1a1a",
         colorLight : "#ffffff",
         correctLevel : QRCode.CorrectLevel.H
     });
@@ -267,10 +312,10 @@ function generateQRs() {
     // 2. QRs por cada mesa
     for (let i = 1; i <= tableCount; i++) {
         const qrCard = document.createElement('div');
-        qrCard.className = 'qr-card';
+        qrCard.className = 'flex flex-col items-center break-inside-avoid mb-6';
         
         const qrId = 'qr-mesa-' + i;
-        qrCard.innerHTML = `<h3>Mesa ${i}</h3><div id="${qrId}"></div><p class="mt-2 text-sm text-gray-500">Mesa ${i}</p>`;
+        qrCard.innerHTML = createCardHTML(qrId, `MESA ${i}`);
         container.appendChild(qrCard);
 
         // Si la URL ya tiene parámetros (ej ?id=1), usamos &mesa=i, si no ?mesa=i
@@ -279,15 +324,45 @@ function generateQRs() {
 
         new QRCode(document.getElementById(qrId), {
             text: tableUrl,
-            width: 200,
-            height: 200,
-            colorDark : "#000000",
+            width: 170,
+            height: 170,
+            colorDark : "#1a1a1a",
             colorLight : "#ffffff",
             correctLevel : QRCode.CorrectLevel.H
         });
     }
 
     document.getElementById('qrModal').classList.remove('hidden');
+}
+
+// Download QR Card as Image
+function downloadQRImage(elementId, label) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    
+    // Save original transform/styles just in case
+    const originalTransform = el.style.transform;
+    el.style.transform = "none";
+    
+    // Small toast notification
+    showToast('⏳ Generando imagen...', 'success');
+    
+    html2canvas(el, {
+        scale: 3, // High resolution for printing
+        backgroundColor: null,
+        useCORS: true,
+        logging: false
+    }).then(canvas => {
+        el.style.transform = originalTransform;
+        const link = document.createElement('a');
+        link.download = `MenuPro-QR-${label}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('✅ Descarga completada');
+    }).catch(err => {
+        console.error('Error generando imagen QR:', err);
+        showToast('❌ Error al descargar la imagen', 'error');
+    });
 }
 
 // Upload product image
