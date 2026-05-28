@@ -357,9 +357,17 @@
             <button onclick="filterOrdersByStatus('Entregado')"
               class="order-filter-btn px-4 py-1.5 rounded-xl text-xs font-bold transition-all">🚚 Entregados</button>
           </div>
-          <button onclick="loadOrders()"
-            class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-2 text-sm font-bold">🔄
-            Recargar</button>
+          <div class="flex items-center gap-2">
+            <select id="orderTimeFilter" onchange="filterOrdersByTime(this.value)" class="bg-gray-100 border-none p-2 rounded-lg text-sm font-bold focus:ring-2 focus:ring-orange-500 outline-none cursor-pointer">
+              <option value="all" selected>Todos los tiempos</option>
+              <option value="today">Hoy</option>
+              <option value="7days">Últimos 7 días</option>
+              <option value="30days">Últimos 30 días</option>
+            </select>
+            <button onclick="loadOrders()"
+              class="bg-gray-100 p-2 rounded-lg hover:bg-gray-200 transition-all flex items-center gap-2 text-sm font-bold">🔄
+              Recargar</button>
+          </div>
         </div>
         <div class="overflow-x-auto">
           <table class="admin-table">

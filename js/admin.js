@@ -2,6 +2,7 @@
 let allProducts = [];
 let allOrders = [];
 let currentOrderFilter = 'Todos';
+let currentTimeFilter = 'all';
 let businessId = null;
 let businessSlug = null;
 let lastPendingCount = 0;
@@ -632,18 +633,44 @@ async function loadOrders() {
     }
 }
 
+// Filter orders by time
+function filterOrdersByTime(timeRange) {
+    currentTimeFilter = timeRange;
+    renderOrders();
+}
+
 // Render orders with active filter
 function renderOrders() {
     const container = document.getElementById('ordersList');
     if (!container) return;
 
     let filtered = allOrders;
+    
     if (currentOrderFilter !== 'Todos') {
-        filtered = allOrders.filter(o => (o.status || 'Pendiente') === currentOrderFilter);
+        filtered = filtered.filter(o => (o.status || 'Pendiente') === currentOrderFilter);
+    }
+    
+    if (currentTimeFilter !== 'all') {
+        const now = new Date();
+        filtered = filtered.filter(o => {
+            const orderDate = new Date(o.created_at);
+            if (currentTimeFilter === 'today') {
+                return orderDate.toDateString() === now.toDateString();
+            } else if (currentTimeFilter === '7days') {
+                const limitDate = new Date();
+                limitDate.setDate(now.getDate() - 7);
+                return orderDate >= limitDate;
+            } else if (currentTimeFilter === '30days') {
+                const limitDate = new Date();
+                limitDate.setDate(now.getDate() - 30);
+                return orderDate >= limitDate;
+            }
+            return true;
+        });
     }
 
     if (!filtered.length) {
-        container.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-gray-400">No hay pedidos ${currentOrderFilter !== 'Todos' ? 'con estado ' + currentOrderFilter : 'registrados'}</td></tr>`;
+        container.innerHTML = `<tr><td colspan="7" class="text-center py-10 text-gray-400">No hay pedidos registrados para estos filtros</td></tr>`;
         return;
     }
 
@@ -672,8 +699,10 @@ function renderOrders() {
                             <option value="Confirmado" ${status === 'Confirmado' ? 'selected' : ''}>✅ Confirmado</option>
                             <option value="Preparando" ${status === 'Preparando' ? 'selected' : ''}>👨‍🍳 Preparando</option>
                             <option value="Entregado" ${status === 'Entregado' ? 'selected' : ''}>🚚 Entregado</option>
+                            <option value="Cancelado" ${status === 'Cancelado' ? 'selected' : ''}>❌ Cancelado</option>
                         </select>
                         <button onclick="viewOrderDetail(${o.id})" class="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-sm">Ver detalles</button>
+                        <button onclick="deleteOrder(${o.id})" class="bg-red-100 hover:bg-red-200 text-red-600 px-2 py-1.5 rounded-lg text-xs transition-all shadow-sm" title="Eliminar Pedido">🗑️</button>
                     </div>
                 </td>
             </tr>
@@ -685,6 +714,8 @@ function renderOrders() {
 function getStatusBadge(status) {
     status = status || 'Pendiente';
     switch(status) {
+        case 'Cancelado':
+            return `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">❌ Cancelado</span>`;
         case 'Confirmado':
             return `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800">✅ Confirmado</span>`;
         case 'Preparando':
@@ -703,6 +734,7 @@ function getProgressBar(status) {
     let width = '25%';
     let color = 'bg-yellow-400';
     
+    if (status === 'Cancelado') { width = '100%'; color = 'bg-red-500'; }
     if (status === 'Confirmado') { width = '50%'; color = 'bg-blue-500'; }
     if (status === 'Preparando') { width = '75%'; color = 'bg-purple-500'; }
     if (status === 'Entregado') { width = '100%'; color = 'bg-green-500'; }
@@ -741,6 +773,26 @@ async function updateOrderStatus(orderId, newStatus) {
     } catch (err) {
         console.error('Error updating order status:', err);
         showToast('❌ Error al actualizar estado: ' + err.message, 'error');
+    }
+}
+
+// Delete Order
+async function deleteOrder(orderId) {
+    const confirmation = prompt('⚠️ Para eliminar este pedido PERMANENTEMENTE, escribe la palabra ELIMINAR:');
+    if (confirmation !== 'ELIMINAR') {
+        if (confirmation !== null) showToast('⚠️ Confirmación incorrecta, pedido no eliminado', 'error');
+        return;
+    }
+    
+    try {
+        const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
+        if (error) throw error;
+        showToast('🗑️ Pedido eliminado correctamente');
+        allOrders = allOrders.filter(o => o.id !== orderId);
+        renderOrders();
+    } catch (err) {
+        console.error('Error al eliminar pedido:', err);
+        showToast('❌ Error al eliminar pedido: ' + err.message, 'error');
     }
 }
 
