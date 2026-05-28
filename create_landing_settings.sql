@@ -12,7 +12,9 @@ CREATE TABLE landing_settings (
   admin_image_url TEXT DEFAULT 'img/dashboard_preview.png',
   mobile_image_url TEXT DEFAULT 'img/mobile_order.png',
   qr_image_url TEXT DEFAULT 'img/qr_table.png',
+  developer_image_url TEXT DEFAULT 'https://ui-avatars.com/api/?name=Dev&background=ff5f6d&color=fff&size=200',
   fb_pixel_id TEXT DEFAULT '',
+  fb_api_token TEXT DEFAULT '',
   price_old TEXT DEFAULT '150',
   price_current TEXT DEFAULT '49',
   whatsapp_number TEXT DEFAULT '573015027933',
@@ -23,8 +25,8 @@ CREATE TABLE landing_settings (
 );
 
 -- Insertar fila única por defecto
-INSERT INTO landing_settings (id, hero_image_url, admin_image_url, mobile_image_url, qr_image_url, fb_pixel_id, price_old, price_current, whatsapp_number, spots_left)
-VALUES (1, 'img/hero_showcase.png', 'img/dashboard_preview.png', 'img/mobile_order.png', 'img/qr_table.png', '', '150', '49', '573015027933', 3)
+INSERT INTO landing_settings (id, hero_image_url, admin_image_url, mobile_image_url, qr_image_url, developer_image_url, fb_pixel_id, fb_api_token, price_old, price_current, whatsapp_number, spots_left)
+VALUES (1, 'img/hero_showcase.png', 'img/dashboard_preview.png', 'img/mobile_order.png', 'img/qr_table.png', 'https://ui-avatars.com/api/?name=Dev&background=ff5f6d&color=fff&size=200', '', '', '150', '49', '573015027933', 3)
 ON CONFLICT (id) DO NOTHING;
 
 -- Habilitar RLS
