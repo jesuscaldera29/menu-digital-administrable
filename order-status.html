@@ -151,6 +151,7 @@
           <span class="font-bold text-gray-500 text-xs">Total:</span>
           <span class="text-lg font-black text-red-600" id="orderTotalText"></span>
         </div>
+        <button id="btnNotify" onclick="enableNotifications()" class="mt-6 bg-orange-100 text-orange-600 px-4 py-3 rounded-xl text-xs font-bold w-full transition-all hover:bg-orange-200 flex items-center justify-center gap-2">🔔 Activar Notificaciones y Sonido</button>
       </div>
     </div>
   </div>
@@ -160,6 +161,24 @@
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get('id');
+    let currentKnownStatus = null;
+    let notificationsEnabled = false;
+
+    async function enableNotifications() {
+      if ("Notification" in window) {
+        const perm = await Notification.requestPermission();
+        if (perm === "granted") {
+          notificationsEnabled = true;
+          const audio = document.getElementById('notificationSound');
+          if (audio) {
+            audio.volume = 0;
+            audio.play().catch(e => console.log('Unlock failed:', e));
+            setTimeout(() => audio.volume = 1, 1000);
+          }
+          document.getElementById('btnNotify').classList.add('hidden');
+        }
+      }
+    }
 
     async function loadOrderStatus() {
       if (!orderId) {
@@ -205,6 +224,21 @@
           </div>
         `).join('');
 
+        // Verificamos si cambió el estado para notificar
+        const newStatus = order.status || 'Pendiente';
+        if (currentKnownStatus && currentKnownStatus !== newStatus) {
+            const audio = document.getElementById('notificationSound');
+            if (audio) audio.play().catch(e => {});
+            
+            if (notificationsEnabled && Notification.permission === "granted") {
+                new Notification("¡Tu pedido se ha actualizado!", {
+                    body: \`El nuevo estado de tu pedido es: \${newStatus}\`,
+                    icon: "https://ui-avatars.com/api/?name=MP&background=ea580c&color=fff"
+                });
+            }
+        }
+        currentKnownStatus = newStatus;
+
         document.getElementById('orderTotalText').textContent = `$${Number(order.total).toLocaleString()}`;
         document.getElementById('loadingScreen').classList.add('hidden');
         document.getElementById('trackerScreen').classList.remove('hidden');
@@ -244,5 +278,7 @@
     loadOrderStatus();
     setInterval(loadOrderStatus, 10000);
   </script>
+  
+  <audio id="notificationSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 </body>
 </html>

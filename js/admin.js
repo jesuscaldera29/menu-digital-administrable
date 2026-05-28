@@ -10,6 +10,30 @@ let salesChartInstance = null;
 let currentReportData = [];
 
 // Toast notification
+let notificationsEnabled = false;
+
+async function enableNotifications() {
+    if ("Notification" in window) {
+        const perm = await Notification.requestPermission();
+        if (perm === "granted") {
+            notificationsEnabled = true;
+            showToast('✅ Notificaciones de escritorio activadas');
+            const audio = document.getElementById('notificationSound');
+            if (audio) {
+                audio.volume = 0;
+                audio.play().catch(e => console.log('Unlock failed:', e));
+                setTimeout(() => audio.volume = 1, 1000);
+            }
+            const btn = document.getElementById('btnEnableNotifications');
+            if (btn) btn.classList.add('hidden');
+        } else {
+            showToast('⚠️ Permiso de notificaciones denegado', 'error');
+        }
+    } else {
+        showToast('❌ Tu navegador no soporta notificaciones', 'error');
+    }
+}
+
 function showToast(msg, type = 'success') {
     const t = document.getElementById('toast');
     if (!t) return console.log('Toast:', msg);
@@ -68,6 +92,13 @@ async function pollNewOrders() {
             const audio = document.getElementById('notificationSound');
             if (audio) {
                 audio.play().catch(e => console.warn('Audio auto-play bloqueado por el navegador', e));
+            }
+            
+            if (notificationsEnabled && Notification.permission === "granted") {
+                new Notification("🛎️ ¡Nuevo Pedido Recibido!", {
+                    body: "Tienes pedidos pendientes por revisar en MenuPro.",
+                    icon: "https://ui-avatars.com/api/?name=Menu&background=ea580c&color=fff"
+                });
             }
             showToast('🔔 ¡NUEVO PEDIDO RECIBIDO!', 'success');
         }
