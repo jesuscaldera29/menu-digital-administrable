@@ -1184,7 +1184,7 @@ let currentVeProductId = null;
 window.openVisualExtrasModal = function(productId) {
     try {
         currentVeProductId = productId;
-        const p = products.find(x => String(x.id) === String(productId));
+        const p = allProducts.find(x => String(x.id) === String(productId));
 
         const modal = document.getElementById('visualExtrasModal');
         if (!modal) {
@@ -1319,7 +1319,7 @@ async function saveVisualExtrasLimit() {
         if (error) throw error;
 
         // Actualizar array local
-        const p = products.find(x => String(x.id) === String(currentVeProductId));
+        const p = allProducts.find(x => String(x.id) === String(currentVeProductId));
         if (p) p.accompaniments_limit = limit;
 
         showToast('✅ Límite actualizado exitosamente');
