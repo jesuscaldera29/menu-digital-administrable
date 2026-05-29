@@ -1185,16 +1185,22 @@ function openVisualExtrasModal(productId) {
     currentVeProductId = productId;
     const p = products.find(x => String(x.id) === String(productId));
 
-    document.getElementById('veProductId').value = productId;
-    document.getElementById('veName').value = '';
-    document.getElementById('vePrice').value = '0';
-    document.getElementById('veImage').value = '';
+    const modal = document.getElementById('visualExtrasModal');
+    if (!modal) {
+        alert('⚠️ Por favor actualiza la página recargando la caché (Ctrl + F5 o borrando datos de navegación) para poder usar el Gestor de Opciones.');
+        return;
+    }
+
+    if (document.getElementById('veProductId')) document.getElementById('veProductId').value = productId;
+    if (document.getElementById('veName')) document.getElementById('veName').value = '';
+    if (document.getElementById('vePrice')) document.getElementById('vePrice').value = '0';
+    if (document.getElementById('veImage')) document.getElementById('veImage').value = '';
 
     if (document.getElementById('veLimit')) {
         document.getElementById('veLimit').value = p?.accompaniments_limit || '';
     }
 
-    document.getElementById('visualExtrasModal').style.display = 'flex';
+    modal.style.display = 'flex';
     loadVisualExtras(productId);
 }
 
