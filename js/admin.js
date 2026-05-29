@@ -419,6 +419,7 @@ async function addProduct(event) {
     const category = document.getElementById('prodCategory').value.trim();
     const description = document.getElementById('prodDescription').value.trim();
     const accompaniments = document.getElementById('prodAccompaniments').value.trim();
+    const accompanimentsLimit = parseInt(document.getElementById('prodAccompanimentsLimit').value) || null;
     const file = document.getElementById('prodImage').files[0];
 
     if (!name || isNaN(price) || !category) return showToast('⚠️ Completa nombre, precio y categoría', 'error');
@@ -445,6 +446,7 @@ async function addProduct(event) {
             category, 
             description,
             accompaniments,
+            accompaniments_limit: accompanimentsLimit,
             image_url,
             business_id: businessId
         }]);
@@ -458,6 +460,7 @@ async function addProduct(event) {
         document.getElementById('prodCategory').value = '';
         document.getElementById('prodDescription').value = '';
         document.getElementById('prodAccompaniments').value = '';
+        document.getElementById('prodAccompanimentsLimit').value = '';
         document.getElementById('prodImage').value = '';
         document.getElementById('prodPreview').src = '';
         document.getElementById('prodPreview').style.display = 'none';
@@ -589,6 +592,7 @@ function openEdit(id) {
     document.getElementById('editCategory').value = p.category;
     document.getElementById('editDescription').value = p.description || '';
     document.getElementById('editAccompaniments').value = p.accompaniments || '';
+    document.getElementById('editAccompanimentsLimit').value = p.accompaniments_limit || '';
     document.getElementById('editImage').value = '';
     
     const preview = document.getElementById('editPreview');
@@ -614,11 +618,12 @@ async function saveEdit() {
     const category = document.getElementById('editCategory').value.trim();
     const description = document.getElementById('editDescription').value.trim();
     const accompaniments = document.getElementById('editAccompaniments').value.trim();
+    const accompanimentsLimit = parseInt(document.getElementById('editAccompanimentsLimit').value) || null;
     const file = document.getElementById('editImage').files[0];
 
     if (!name || isNaN(price) || !category) return showToast('⚠️ Completa todos los campos', 'error');
 
-    const updateData = { name, price, category, description, accompaniments };
+    const updateData = { name, price, category, description, accompaniments, accompaniments_limit: accompanimentsLimit };
     if (file) {
         showToast('⏳ Subiendo imagen...');
         const url = await uploadImage(file);

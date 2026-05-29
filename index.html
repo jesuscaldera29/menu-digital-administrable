@@ -525,6 +525,7 @@
 
     // LOGICA DE MODAL DE ACOMPAÑAMIENTOS
     let currentAccProductId = null;
+    let currentAccLimit = null;
 
     window.openAccompanimentsModal = function(productId) {
       const p = products.find(x => String(x.id) === String(productId));
@@ -540,10 +541,19 @@
       }
       
       currentAccProductId = productId;
+      currentAccLimit = p.accompaniments_limit || null;
+      
+      const subtitle = document.querySelector('#accompanimentsModal p');
+      if (currentAccLimit) {
+        subtitle.textContent = `Selecciona máximo ${currentAccLimit} opción(es):`;
+      } else {
+        subtitle.textContent = "Selecciona los que desees agregar a tu plato:";
+      }
+
       const container = document.getElementById('accompanimentsList');
       container.innerHTML = list.map((acc, index) => `
         <label class="flex items-center gap-3 p-3.5 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-colors border border-gray-100">
-          <input type="checkbox" name="accOption" value="${acc}" class="w-5 h-5 accent-orange-600 rounded">
+          <input type="checkbox" name="accOption" value="${acc}" class="w-5 h-5 accent-orange-600 rounded" onchange="handleAccChange(this)">
           <span class="text-sm font-bold text-gray-700">${acc}</span>
         </label>
       `).join('');
@@ -551,9 +561,19 @@
       document.getElementById('accompanimentsModal').style.display = 'flex';
     };
 
+    window.handleAccChange = function(checkbox) {
+      if (!currentAccLimit) return;
+      const checkedBoxes = document.querySelectorAll('input[name="accOption"]:checked');
+      if (checkedBoxes.length > currentAccLimit) {
+        checkbox.checked = false;
+        showToast(`⚠️ Solo puedes seleccionar máximo ${currentAccLimit} opción(es)`, 'error');
+      }
+    };
+
     window.closeAccompanimentsModal = function() {
       document.getElementById('accompanimentsModal').style.display = 'none';
       currentAccProductId = null;
+      currentAccLimit = null;
     };
 
     window.confirmAccompaniments = function() {
