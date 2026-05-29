@@ -149,6 +149,16 @@ async function loadProducts() {
     .order('category');
 
   products = data || [];
+  
+  try {
+      const { data: extrasData } = await supabaseClient
+        .from('product_extras')
+        .select('*')
+        .eq('business_id', currentBusinessId);
+      window.allVisualExtras = extrasData || [];
+  } catch (err) {
+      window.allVisualExtras = [];
+  }
   // Excluir Acompañantes y Acompañantes del dia de las categorías de la landing/tabs principales
   categories = ['Todos', ...new Set(products.map(p => p.category))].filter(c => c !== 'Acompañantes' && c !== 'Acompañantes del dia');
   renderCategories();
@@ -206,12 +216,14 @@ function renderMenu() {
 }
 
 // Cart functions
-function addToCart(id, accompaniments = []) {
-  const key = accompaniments.length ? `${id}_${accompaniments.join(',')}` : String(id);
+function addToCart(id, accompaniments = [], visualExtras = []) {
+  const accKey = accompaniments.length ? accompaniments.join(',') : '';
+  const veKey = visualExtras.length ? visualExtras.map(v => v.id).sort().join(',') : '';
+  const key = `${id}_${accKey}_${veKey}`;
   if (cart[key]) {
     cart[key].qty++;
   } else {
-    cart[key] = { id, qty: 1, accompaniments };
+    cart[key] = { id, qty: 1, accompaniments, visualExtras };
   }
   updateCartUI();
   showToast('✅ Agregado al carrito');
@@ -255,7 +267,13 @@ function updateCartUI() {
   let total = 0;
   for (const [key, item] of Object.entries(cart)) {
     const p = products.find(x => String(x.id) === String(item.id));
-    if (p) total += p.price * item.qty;
+    if (p) {
+        let extrasTotal = 0;
+        if (item.visualExtras && item.visualExtras.length) {
+            item.visualExtras.forEach(ve => { extrasTotal += Number(ve.price || 0); });
+        }
+        total += (p.price + extrasTotal) * item.qty;
+    }
   }
   const cartTotal = document.getElementById('cartTotal');
   const cartTotalBottom = document.getElementById('cartTotalBottom');
@@ -275,8 +293,14 @@ function toggleOrderDetails() {
     for (const [key, item] of Object.entries(cart)) {
       const p = products.find(x => String(x.id) === String(item.id));
       if (!p) continue;
-      const displayName = item.accompaniments.length 
-        ? `${p.name} <span class="text-xs text-gray-500 block">(Acompañamientos: ${item.accompaniments.join(', ')})</span>`
+      
+      let allAcc = [...(item.accompaniments || [])];
+      if (item.visualExtras && item.visualExtras.length) {
+          item.visualExtras.forEach(ve => allAcc.push(ve.price > 0 ? `${ve.name} (+$${Number(ve.price).toLocaleString()})` : ve.name));
+      }
+      
+      const displayName = allAcc.length 
+        ? `${p.name} <span class="text-xs text-gray-500 block">(Acompañamientos: ${allAcc.join(', ')})</span>`
         : p.name;
       html += `<div class="order-item">
         <span>${displayName}</span>
@@ -336,11 +360,23 @@ async function processOrder() {
     for (const [key, item] of Object.entries(cart)) {
       const p = products.find(x => String(x.id) === String(item.id));
       if (!p) continue;
-      total += p.price * item.qty;
-      const displayName = item.accompaniments.length 
-        ? `${p.name} (Acompañamientos: ${item.accompaniments.join(', ')})`
+      
+      let extrasTotal = 0;
+      let allAcc = [...(item.accompaniments || [])];
+      if (item.visualExtras && item.visualExtras.length) {
+          item.visualExtras.forEach(ve => {
+              extrasTotal += Number(ve.price || 0);
+              allAcc.push(ve.price > 0 ? `${ve.name} (+$${Number(ve.price).toLocaleString()})` : ve.name);
+          });
+      }
+      
+      let itemPrice = p.price + extrasTotal;
+      total += itemPrice * item.qty;
+      
+      const displayName = allAcc.length 
+        ? `${p.name} (Acompañamientos: ${allAcc.join(', ')})`
         : p.name;
-      orderItems.push({ id: p.id, name: displayName, qty: item.qty, price: p.price });
+      orderItems.push({ id: p.id, name: displayName, qty: item.qty, price: itemPrice });
     }
 
     const { data: order, error: orderErr } = await supabaseClient.from('orders').insert([{

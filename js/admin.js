@@ -545,6 +545,9 @@ function renderProducts() {
               </button>
               <button class="bg-blue-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all" onclick="openEdit('${p.id}')">✏️ Editar</button>
               <button class="bg-red-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
+              <button class="col-span-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2" onclick="openVisualExtrasModal('${p.id}')">
+                ✨ Gestor de Extras Visuales
+              </button>
               <button class="col-span-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2" onclick="openPostModal('${p.id}')">
                 📢 Generar Post de Venta
               </button>
@@ -1173,6 +1176,118 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function logout() { await supabaseClient.auth.signOut(); window.location.href = 'login.html'; }
 
+// ==========================================
+// GESTOR DE EXTRAS VISUALES
+// ==========================================
+let currentVeProductId = null;
+
+function openVisualExtrasModal(productId) {
+    currentVeProductId = productId;
+    document.getElementById('veProductId').value = productId;
+    document.getElementById('veName').value = '';
+    document.getElementById('vePrice').value = '0';
+    document.getElementById('veImage').value = '';
+    document.getElementById('visualExtrasModal').style.display = 'flex';
+    loadVisualExtras(productId);
+}
+
+function closeVisualExtrasModal() {
+    document.getElementById('visualExtrasModal').style.display = 'none';
+    currentVeProductId = null;
+}
+
+async function loadVisualExtras(productId) {
+    const list = document.getElementById('veList');
+    list.innerHTML = '<p class="text-sm text-gray-400 italic">Cargando extras...</p>';
+    
+    try {
+        const { data, error } = await supabaseClient
+            .from('product_extras')
+            .select('*')
+            .eq('product_id', productId)
+            .order('created_at', { ascending: false });
+            
+        if (error) throw error;
+        
+        if (!data || data.length === 0) {
+            list.innerHTML = '<p class="text-sm text-gray-400 italic">No hay extras visuales para este producto. Agrega uno nuevo.</p>';
+            return;
+        }
+        
+        list.innerHTML = data.map(extra => `
+            <div class="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3">
+                    ${extra.image_url ? `<img src="${extra.image_url}" class="w-10 h-10 rounded-full object-cover shadow-sm">` : `<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">✨</div>`}
+                    <div>
+                        <p class="font-bold text-sm leading-none">${extra.name}</p>
+                        <p class="text-xs text-orange-600 font-bold mt-1">${extra.price > 0 ? '+$' + Number(extra.price).toLocaleString() : 'GRATIS'}</p>
+                    </div>
+                </div>
+                <button onclick="deleteVisualExtra('${extra.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors">🗑️</button>
+            </div>
+        `).join('');
+    } catch (err) {
+        list.innerHTML = '<p class="text-sm text-red-500">Error al cargar extras</p>';
+        console.error(err);
+    }
+}
+
+async function saveVisualExtra() {
+    const productId = currentVeProductId;
+    const name = document.getElementById('veName').value.trim();
+    const price = parseFloat(document.getElementById('vePrice').value) || 0;
+    const file = document.getElementById('veImage').files[0];
+    
+    if (!name) return showToast('⚠️ Ingresa el nombre del extra', 'error');
+    
+    const btn = document.getElementById('btnSaveVisualExtra');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '⏳ Guardando...';
+    btn.disabled = true;
+    
+    let image_url = null;
+    if (file) {
+        image_url = await uploadImage(file);
+    }
+    
+    try {
+        const { error } = await supabaseClient.from('product_extras').insert([{
+            business_id: businessId,
+            product_id: productId,
+            name: name,
+            price: price,
+            image_url: image_url
+        }]);
+        
+        if (error) throw error;
+        
+        showToast('✅ Extra guardado correctamente');
+        document.getElementById('veName').value = '';
+        document.getElementById('vePrice').value = '0';
+        document.getElementById('veImage').value = '';
+        loadVisualExtras(productId);
+    } catch (err) {
+        console.error(err);
+        showToast('❌ Error al guardar', 'error');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+async function deleteVisualExtra(extraId) {
+    if (!confirm('¿Eliminar este extra?')) return;
+    
+    try {
+        const { error } = await supabaseClient.from('product_extras').delete().eq('id', extraId);
+        if (error) throw error;
+        
+        showToast('🗑️ Extra eliminado');
+        if (currentVeProductId) loadVisualExtras(currentVeProductId);
+    } catch (err) {
+        showToast('Error: ' + err.message, 'error');
+    }
+}
 
 // ==========================================
 // PWA INSTALL LOGIC

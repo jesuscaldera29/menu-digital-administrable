@@ -548,6 +548,52 @@
 
   <div id="toast" class="toast"></div>
 
+  <!-- MODAL GESTOR DE EXTRAS VISUALES -->
+  <div id="visualExtrasModal" class="fixed inset-0 bg-black/60 items-start justify-center z-[200] p-4 overflow-y-auto backdrop-blur-sm" style="display:none">
+    <div class="bg-white w-full max-w-2xl rounded-[32px] p-8 my-10 shadow-2xl transform transition-all relative">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-3xl font-black tracking-tight flex items-center gap-2">✨ Gestor de Extras</h2>
+          <p class="text-sm text-gray-500 font-medium mt-1">Configura sabores y modificadores visuales para este producto.</p>
+        </div>
+        <button onclick="closeVisualExtrasModal()" class="text-gray-400 hover:text-black transition-colors text-3xl">&times;</button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Formulario -->
+        <div class="bg-gray-50 p-6 rounded-2xl border border-gray-100">
+          <h3 class="font-bold text-lg mb-4">Agregar Nuevo Extra</h3>
+          <input type="hidden" id="veProductId">
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Nombre del Extra / Sabor</label>
+              <input type="text" id="veName" class="input mt-1" placeholder="Ej: Vainilla, Adición de Queso...">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Precio Extra (0 si es gratis)</label>
+              <input type="number" id="vePrice" class="input mt-1" placeholder="0" value="0" min="0">
+            </div>
+            <div>
+              <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Foto del Extra</label>
+              <input type="file" id="veImage" class="input mt-1" accept="image/*">
+            </div>
+            <button id="btnSaveVisualExtra" onclick="saveVisualExtra()" class="w-full bg-black text-white font-bold py-3 rounded-xl active:scale-95 transition-all shadow-md mt-4 flex justify-center items-center gap-2">
+              ➕ Agregar Extra
+            </button>
+          </div>
+        </div>
+        
+        <!-- Lista de Extras Creados -->
+        <div>
+          <h3 class="font-bold text-lg mb-4">Extras de este Producto</h3>
+          <div id="veList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scroll">
+            <p class="text-sm text-gray-400 italic">Cargando extras...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- MODAL DE POST DE VENTA -->
   <div id="postModal" class="fixed inset-0 bg-black/80 items-center justify-center z-[300] p-4 backdrop-blur-md"
     style="display:none">

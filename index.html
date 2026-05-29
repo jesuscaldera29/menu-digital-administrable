@@ -529,14 +529,15 @@
 
     window.openAccompanimentsModal = function(productId) {
       const p = products.find(x => String(x.id) === String(productId));
-      if (!p || !p.accompaniments) {
-        addToCart(productId, []);
-        return;
-      }
+      if (!p) return;
       
-      const list = p.accompaniments.split(',').map(x => x.trim()).filter(x => x.length > 0);
-      if (list.length === 0) {
-        addToCart(productId, []);
+      const visualExtras = (window.allVisualExtras || []).filter(e => String(e.product_id) === String(productId));
+      const hasVisualExtras = visualExtras.length > 0;
+      
+      const list = p.accompaniments ? p.accompaniments.split(',').map(x => x.trim()).filter(x => x.length > 0) : [];
+      
+      if (!hasVisualExtras && list.length === 0) {
+        addToCart(productId, [], []);
         return;
       }
       
@@ -551,19 +552,40 @@
       }
 
       const container = document.getElementById('accompanimentsList');
-      container.innerHTML = list.map((acc, index) => `
-        <label class="flex items-center gap-3 p-3.5 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-colors border border-gray-100">
-          <input type="checkbox" name="accOption" value="${acc}" class="w-5 h-5 accent-orange-600 rounded" onchange="handleAccChange(this)">
-          <span class="text-sm font-bold text-gray-700">${acc}</span>
-        </label>
-      `).join('');
+      
+      if (hasVisualExtras) {
+          container.className = "grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scroll mb-6";
+          container.innerHTML = visualExtras.map(ve => `
+            <label class="relative cursor-pointer group visual-extra-label">
+              <input type="checkbox" name="visualAccOption" value='${JSON.stringify(ve).replace(/'/g, "&#39;")}' class="peer sr-only" onchange="handleAccChange(this)">
+              <div class="border-2 border-gray-100 rounded-2xl p-3 flex flex-col items-center text-center transition-all bg-white peer-checked:border-orange-500 peer-checked:bg-orange-50 peer-checked:shadow-md group-hover:border-orange-200">
+                  <div class="w-16 h-16 rounded-full bg-gray-100 mb-2 overflow-hidden shadow-inner flex items-center justify-center">
+                      ${ve.image_url ? `<img src="${ve.image_url}" class="w-full h-full object-cover">` : `<span class="text-2xl">✨</span>`}
+                  </div>
+                  <span class="text-sm font-black text-gray-800 leading-tight">${ve.name}</span>
+                  <span class="text-[10px] font-bold text-orange-600 uppercase tracking-widest mt-1 bg-orange-100 px-2 py-0.5 rounded-full">${ve.price > 0 ? '+$' + Number(ve.price).toLocaleString() : 'GRATIS'}</span>
+              </div>
+              <div class="absolute top-2 right-2 w-5 h-5 bg-orange-500 rounded-full text-white flex items-center justify-center opacity-0 peer-checked:opacity-100 transition-opacity transform scale-50 peer-checked:scale-100 duration-200 shadow-sm">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+              </div>
+            </label>
+          `).join('');
+      } else {
+          container.className = "space-y-2.5 max-h-[250px] overflow-y-auto pr-2 custom-scroll mb-6";
+          container.innerHTML = list.map((acc, index) => `
+            <label class="flex items-center gap-3 p-3.5 bg-gray-50 hover:bg-gray-100 rounded-2xl cursor-pointer transition-colors border border-gray-100">
+              <input type="checkbox" name="accOption" value="${acc}" class="w-5 h-5 accent-orange-600 rounded" onchange="handleAccChange(this)">
+              <span class="text-sm font-bold text-gray-700">${acc}</span>
+            </label>
+          `).join('');
+      }
       
       document.getElementById('accompanimentsModal').style.display = 'flex';
     };
 
     window.handleAccChange = function(checkbox) {
       if (!currentAccLimit) return;
-      const checkedBoxes = document.querySelectorAll('input[name="accOption"]:checked');
+      const checkedBoxes = document.querySelectorAll('input[name="accOption"]:checked, input[name="visualAccOption"]:checked');
       if (checkedBoxes.length > currentAccLimit) {
         checkbox.checked = false;
         showToast(`⚠️ Solo puedes seleccionar máximo ${currentAccLimit} opción(es)`, 'error');
@@ -578,12 +600,18 @@
 
     window.confirmAccompaniments = function() {
       if (!currentAccProductId) return;
-      const selected = [];
+      
+      const selectedText = [];
       document.querySelectorAll('input[name="accOption"]:checked').forEach(cb => {
-        selected.push(cb.value);
+        selectedText.push(cb.value);
       });
       
-      addToCart(currentAccProductId, selected);
+      const selectedVisuals = [];
+      document.querySelectorAll('input[name="visualAccOption"]:checked').forEach(cb => {
+        selectedVisuals.push(JSON.parse(cb.value));
+      });
+      
+      addToCart(currentAccProductId, selectedText, selectedVisuals);
       closeAccompanimentsModal();
     };
 
