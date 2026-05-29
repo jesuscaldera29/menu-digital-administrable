@@ -35,6 +35,17 @@
       scrollbar-width: none;
     }
 
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-5px); }
+      40% { transform: translateX(5px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
     /* CATEGORÍAS */
     .category-tab {
       background: white;
@@ -422,9 +433,13 @@
   <!-- MODAL DE ACOMPAÑAMIENTOS -->
   <div id="accompanimentsModal"
     class="fixed inset-0 bg-black/80 z-[300] hidden items-center justify-center p-4 backdrop-blur-md">
-    <div class="bg-white w-full max-w-md rounded-[32px] p-6 shadow-2xl relative">
+    <div class="bg-white w-full max-w-md rounded-[32px] p-6 shadow-2xl relative transition-transform" id="accModalContent">
       <h3 class="text-xl font-black mb-2 text-black flex items-center gap-2">🍟 Elige tus Acompañamientos</h3>
       <p class="text-xs text-gray-500 mb-4 font-medium">Selecciona los que desees agregar a tu plato:</p>
+
+      <div id="accLimitError" class="hidden bg-red-50 text-red-600 px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider mb-4 border border-red-100 flex items-center gap-2 animate-pulse transition-all">
+        ⚠️ Solo puedes elegir <span id="accLimitNumber"></span> opción(es)
+      </div>
 
       <div id="accompanimentsList" class="space-y-2.5 max-h-[250px] overflow-y-auto pr-2 custom-scroll mb-6">
         <!-- Checkboxes se cargan aquí -->
@@ -609,7 +624,20 @@
       const checkedBoxes = document.querySelectorAll('input[name="accOption"]:checked, input[name="visualAccOption"]:checked');
       if (checkedBoxes.length > currentAccLimit) {
         checkbox.checked = false;
-        alert(`⚠️ SOLO PUEDES ELEGIR ${currentAccLimit} OPCIÓN(ES) MÁXIMO`);
+        
+        // Mostrar alerta visual elegante
+        const errDiv = document.getElementById('accLimitError');
+        const modalContent = document.getElementById('accModalContent');
+        
+        document.getElementById('accLimitNumber').innerText = currentAccLimit;
+        errDiv.classList.remove('hidden');
+        modalContent.classList.add('animate-shake');
+        
+        // Quitar la alerta después de 3 segundos
+        setTimeout(() => {
+          errDiv.classList.add('hidden');
+          modalContent.classList.remove('animate-shake');
+        }, 3000);
       }
     };
 
