@@ -16,20 +16,24 @@ CREATE TABLE IF NOT EXISTS product_extras (
 -- Habilitar RLS
 ALTER TABLE product_extras ENABLE ROW LEVEL SECURITY;
 
--- Políticas de Seguridad
+-- Políticas de Seguridad (Borramos primero para evitar error si se ejecuta varias veces)
+DROP POLICY IF EXISTS "Public read product_extras" ON product_extras;
 CREATE POLICY "Public read product_extras" ON product_extras
   FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Owner insert product_extras" ON product_extras;
 CREATE POLICY "Owner insert product_extras" ON product_extras
   FOR INSERT WITH CHECK (
     business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS "Owner update product_extras" ON product_extras;
 CREATE POLICY "Owner update product_extras" ON product_extras
   FOR UPDATE USING (
     business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS "Owner delete product_extras" ON product_extras;
 CREATE POLICY "Owner delete product_extras" ON product_extras
   FOR DELETE USING (
     business_id IN (SELECT id FROM businesses WHERE owner_id = auth.uid())
