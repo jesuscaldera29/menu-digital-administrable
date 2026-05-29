@@ -53,7 +53,7 @@ async function initAdmin() {
     if (!session) { window.location.href = 'login.html'; return false; }
     const biz = await getCurrentBusiness();
     if (!biz) { alert('No se encontró un negocio asociado a tu cuenta.'); await supabaseClient.auth.signOut(); window.location.href = 'login.html'; return false; }
-    
+
     if (biz.is_active === false) {
         alert('⚠️ Tu cuenta ha sido SUSPENDIDA. Contacta al administrador.');
         await supabaseClient.auth.signOut();
@@ -69,11 +69,11 @@ async function initAdmin() {
     // Update menu link
     const menuLink = document.querySelector('a[href="index.html"]');
     if (menuLink) { menuLink.href = '/' + biz.slug; menuLink.innerHTML = '📱 Ver Menú'; }
-    
+
     // Iniciar auto-polling de pedidos cada 15 segundos
     setInterval(pollNewOrders, 15000);
     pollNewOrders(); // Primera carga silenciosa
-    
+
     return true;
 }
 
@@ -83,17 +83,17 @@ async function pollNewOrders() {
     try {
         const { data, error } = await supabaseClient.from('orders').select('*').eq('business_id', businessId).order('created_at', { ascending: false });
         if (error) return;
-        
+
         allOrders = data || [];
         const currentPending = allOrders.filter(o => !o.status || o.status === 'Pendiente').length;
-        
+
         if (currentPending > lastPendingCount) {
             // ¡Nuevo pedido!
             const audio = document.getElementById('notificationSound');
             if (audio) {
                 audio.play().catch(e => console.warn('Audio auto-play bloqueado por el navegador', e));
             }
-            
+
             if (notificationsEnabled && Notification.permission === "granted") {
                 new Notification("🛎️ ¡Nuevo Pedido Recibido!", {
                     body: "Tienes pedidos pendientes por revisar en MenuPro.",
@@ -103,7 +103,7 @@ async function pollNewOrders() {
             showToast('🔔 ¡NUEVO PEDIDO RECIBIDO!', 'success');
         }
         lastPendingCount = currentPending;
-        
+
         // Si estamos en la pestaña de pedidos, actualizamos visualmente
         const sectionOrders = document.getElementById('section-orders');
         if (sectionOrders && sectionOrders.classList.contains('active')) {
@@ -250,11 +250,11 @@ async function saveMenuConfig(event) {
     btn.disabled = true;
 
     try {
-        const { error } = await supabaseClient.from('settings').update({ 
+        const { error } = await supabaseClient.from('settings').update({
             menu_url: menuUrl,
             table_count: tableCount
         }).eq('business_id', businessId);
-        
+
         if (error) throw error;
         showToast('✅ Configuración guardada');
     } catch (err) {
@@ -336,16 +336,16 @@ function generateQRs() {
         text: menuUrl,
         width: 170,
         height: 170,
-        colorDark : "#1a1a1a",
-        colorLight : "#ffffff",
-        correctLevel : QRCode.CorrectLevel.H
+        colorDark: "#1a1a1a",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
     });
 
     // 2. QRs por cada mesa
     for (let i = 1; i <= tableCount; i++) {
         const qrCard = document.createElement('div');
         qrCard.className = 'flex flex-col items-center break-inside-avoid mb-6';
-        
+
         const qrId = 'qr-mesa-' + i;
         qrCard.innerHTML = createCardHTML(qrId, `MESA ${i}`);
         container.appendChild(qrCard);
@@ -358,9 +358,9 @@ function generateQRs() {
             text: tableUrl,
             width: 170,
             height: 170,
-            colorDark : "#1a1a1a",
-            colorLight : "#ffffff",
-            correctLevel : QRCode.CorrectLevel.H
+            colorDark: "#1a1a1a",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
         });
     }
 
@@ -371,14 +371,14 @@ function generateQRs() {
 function downloadQRImage(elementId, label) {
     const el = document.getElementById(elementId);
     if (!el) return;
-    
+
     // Save original transform/styles just in case
     const originalTransform = el.style.transform;
     el.style.transform = "none";
-    
+
     // Small toast notification
     showToast('⏳ Generando imagen...', 'success');
-    
+
     html2canvas(el, {
         scale: 3, // High resolution for printing
         backgroundColor: null,
@@ -440,10 +440,10 @@ async function addProduct(event) {
     }
 
     try {
-        const { error } = await supabaseClient.from('products').insert([{ 
-            name, 
-            price, 
-            category, 
+        const { error } = await supabaseClient.from('products').insert([{
+            name,
+            price,
+            category,
             description,
             accompaniments,
             accompaniments_limit: accompanimentsLimit,
@@ -453,7 +453,7 @@ async function addProduct(event) {
         if (error) throw error;
 
         showToast('✅ Producto agregado correctamente');
-        
+
         // Clear fields
         document.getElementById('prodName').value = '';
         document.getElementById('prodPrice').value = '';
@@ -464,7 +464,7 @@ async function addProduct(event) {
         document.getElementById('prodImage').value = '';
         document.getElementById('prodPreview').src = '';
         document.getElementById('prodPreview').style.display = 'none';
-        
+
         loadProducts();
     } catch (err) {
         showToast('❌ Error: ' + err.message, 'error');
@@ -505,12 +505,12 @@ function renderProducts() {
 
     // Group by category
     const categories = [...new Set(allProducts.map(p => p.category))];
-    
+
     let html = '';
     categories.forEach(cat => {
         const catProducts = allProducts.filter(p => p.category === cat);
         const emoji = { 'Desayunos': '🍳', 'Almuerzos': '🍛', 'Comidas Rápidas': '🍔', 'Acompañantes': '🍟', 'Bebidas': '🥤', 'Postres': '🍰' }[cat] || '📂';
-        
+
         // Add Category Header
         html += `
         <div class="col-span-full flex items-center gap-4 mt-4 mb-2">
@@ -546,7 +546,7 @@ function renderProducts() {
               <button class="bg-blue-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all" onclick="openEdit('${p.id}')">✏️ Editar</button>
               <button class="bg-red-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all" onclick="deleteProduct('${p.id}')">🗑️ Eliminar</button>
               <button class="col-span-2 bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2" onclick="openVisualExtrasModal('${p.id}')">
-                ✨ Gestor de Extras Visuales
+                ✨ Gestor de opciones 
               </button>
               <button class="col-span-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-3 rounded-xl text-xs font-black uppercase tracking-wider active:scale-95 transition-all flex items-center justify-center gap-2" onclick="openPostModal('${p.id}')">
                 📢 Generar Post de Venta
@@ -597,7 +597,7 @@ function openEdit(id) {
     document.getElementById('editAccompaniments').value = p.accompaniments || '';
     document.getElementById('editAccompanimentsLimit').value = p.accompaniments_limit || '';
     document.getElementById('editImage').value = '';
-    
+
     const preview = document.getElementById('editPreview');
     if (p.image_url) {
         preview.src = p.image_url;
@@ -650,7 +650,7 @@ function showSection(sectionId, event) {
     event = event || window.event;
     document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-    
+
     document.getElementById(`section-${sectionId}`).classList.add('active');
     if (event && event.target) event.target.classList.add('active');
 
@@ -684,11 +684,11 @@ function renderOrders() {
     if (!container) return;
 
     let filtered = allOrders;
-    
+
     if (currentOrderFilter !== 'Todos') {
         filtered = filtered.filter(o => (o.status || 'Pendiente') === currentOrderFilter);
     }
-    
+
     if (currentTimeFilter !== 'all') {
         const now = new Date();
         filtered = filtered.filter(o => {
@@ -752,7 +752,7 @@ function renderOrders() {
 // Get status badge HTML
 function getStatusBadge(status) {
     status = status || 'Pendiente';
-    switch(status) {
+    switch (status) {
         case 'Cancelado':
             return `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-red-100 text-red-800">❌ Cancelado</span>`;
         case 'Confirmado':
@@ -772,19 +772,19 @@ function getProgressBar(status) {
     status = status || 'Pendiente';
     let width = '25%';
     let color = 'bg-yellow-400';
-    
+
     if (status === 'Cancelado') { width = '100%'; color = 'bg-red-500'; }
     if (status === 'Confirmado') { width = '50%'; color = 'bg-blue-500'; }
     if (status === 'Preparando') { width = '75%'; color = 'bg-purple-500'; }
     if (status === 'Entregado') { width = '100%'; color = 'bg-green-500'; }
-    
+
     return `<div class="h-1.5 ${color} transition-all duration-500" style="width: ${width}"></div>`;
 }
 
 // Filter orders by status tab
 function filterOrdersByStatus(status) {
     currentOrderFilter = status;
-    
+
     // Toggle active state in buttons
     document.querySelectorAll('.order-filter-btn').forEach(btn => {
         if (btn.getAttribute('onclick').includes(`'${status}'`)) {
@@ -802,11 +802,11 @@ async function updateOrderStatus(orderId, newStatus) {
     try {
         const { error } = await supabaseClient.from('orders').update({ status: newStatus }).eq('id', orderId);
         if (error) throw error;
-        
+
         // Update local list without re-fetching everything
         const order = allOrders.find(o => o.id === orderId);
         if (order) order.status = newStatus;
-        
+
         showToast('✅ Estado del pedido actualizado');
         renderOrders();
     } catch (err) {
@@ -822,7 +822,7 @@ async function deleteOrder(orderId) {
         if (confirmation !== null) showToast('⚠️ Confirmación incorrecta, pedido no eliminado', 'error');
         return;
     }
-    
+
     try {
         const { error } = await supabaseClient.from('orders').delete().eq('id', orderId);
         if (error) throw error;
@@ -875,13 +875,13 @@ function closeOrderDetailModal() {
 function sendTrackingLinkWhatsApp() {
     const o = window.currentActiveDetailOrder;
     if (!o) return;
-    
+
     const trackingUrl = document.getElementById('detailTrackingUrl').value;
     const cleanPhone = o.customer_phone.replace(/\D/g, '');
-    
+
     let msg = `Hola *${o.customer_name}*, el estado de tu pedido *#${String(o.id).padStart(4, '0')}* en *Tronco E' Filo* ha sido actualizado.\n\n`;
     msg += `Puedes ver su progreso en tiempo real aquí (enlace temporal válido por 1 hora):\n${trackingUrl}`;
-    
+
     window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -939,7 +939,7 @@ function toggleAllCustomers(source) {
 async function deleteSelectedCustomers() {
     const checkboxes = document.querySelectorAll('.customer-checkbox:checked');
     const ids = Array.from(checkboxes).map(cb => cb.value);
-    
+
     if (ids.length === 0) return showToast('⚠️ Selecciona al menos un cliente', 'error');
     if (!confirm(`¿Eliminar ${ids.length} clientes seleccionados?`)) return;
 
@@ -947,10 +947,10 @@ async function deleteSelectedCustomers() {
         const { error } = await supabaseClient.from('customers').delete().in('id', ids);
         if (error) throw error;
         showToast(`✅ ${ids.length} clientes eliminados`);
-        
+
         const selectAll = document.getElementById('selectAllCustomers');
         if (selectAll) selectAll.checked = false;
-        
+
         loadCustomers();
     } catch (err) {
         showToast('❌ Error: ' + err.message, 'error');
@@ -961,11 +961,11 @@ async function deleteSelectedCustomers() {
 function initReports() {
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('reportEndDate').value = today;
-    
+
     const lastMonth = new Date();
     lastMonth.setMonth(lastMonth.getMonth() - 1);
     document.getElementById('reportStartDate').value = lastMonth.toISOString().split('T')[0];
-    
+
     generateReport();
 }
 
@@ -977,7 +977,7 @@ async function generateReport() {
 
     try {
         const endDateTime = end + 'T23:59:59';
-        
+
         const { data, error } = await supabaseClient.from('orders')
             .select('*')
             .eq('business_id', businessId)
@@ -988,13 +988,13 @@ async function generateReport() {
 
         let totalSales = 0;
         let orderCount = data.length;
-        
+
         currentReportData = data;
         data.forEach(o => totalSales += Number(o.total));
 
         document.getElementById('reportTotalSales').textContent = `$${totalSales.toLocaleString()}`;
         document.getElementById('reportOrderCount').textContent = orderCount;
-        document.getElementById('reportAverageOrder').textContent = `$${(orderCount > 0 ? (totalSales / orderCount) : 0).toLocaleString(undefined, {maximumFractionDigits:0})}`;
+        document.getElementById('reportAverageOrder').textContent = `$${(orderCount > 0 ? (totalSales / orderCount) : 0).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
 
         const summaryContainer = document.getElementById('reportSummary');
         if (orderCount === 0) {
@@ -1018,7 +1018,7 @@ async function generateReport() {
 function renderSalesChart(data) {
     const ctx = document.getElementById('salesChart');
     if (!ctx) return;
-    
+
     // Agrupar ventas por día
     const salesByDay = {};
     data.forEach(o => {
@@ -1026,7 +1026,7 @@ function renderSalesChart(data) {
         if (!salesByDay[dateStr]) salesByDay[dateStr] = 0;
         salesByDay[dateStr] += Number(o.total);
     });
-    
+
     const sortedDates = Object.keys(salesByDay).sort();
     const labels = sortedDates.map(d => new Date(d).toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }));
     const values = sortedDates.map(d => salesByDay[d]);
@@ -1071,7 +1071,7 @@ function downloadReportCSV() {
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "ID,Fecha,Cliente,WhatsApp,Metodo Pago,Metodo Entrega,Estado,Total\n";
 
-    currentReportData.forEach(function(row) {
+    currentReportData.forEach(function (row) {
         const id = row.id;
         const fecha = new Date(row.created_at).toLocaleString();
         const cliente = `"${row.customer_name || ''}"`;
@@ -1080,7 +1080,7 @@ function downloadReportCSV() {
         const metodoEntrega = row.delivery_method || '';
         const estado = row.status || '';
         const total = row.total || 0;
-        
+
         csvContent += `${id},${fecha},${cliente},${telefono},${metodoPago},${metodoEntrega},${estado},${total}\n`;
     });
 
@@ -1101,7 +1101,7 @@ function openPostModal(id) {
     document.getElementById('postName').innerText = p.name;
     document.getElementById('postPrice').innerText = `$${Number(p.price).toLocaleString()}`;
     document.getElementById('postDesc').innerText = p.description || '¡No te quedes sin probarlo! Calidad y sabor garantizado.';
-    
+
     const postImg = document.getElementById('postImage');
     if (p.image_url) {
         // Para evitar problemas de CORS con html2canvas, intentamos cargar la imagen con crossOrigin
@@ -1118,7 +1118,7 @@ function openPostModal(id) {
     const logoUrl = document.getElementById('logoPreview').src;
     const postLogo = document.getElementById('postLogo');
     const postLogoEmoji = document.getElementById('postLogoEmoji');
-    
+
     if (logoUrl && !logoUrl.includes('hidden')) {
         postLogo.src = logoUrl;
         postLogo.classList.remove('hidden');
@@ -1155,7 +1155,7 @@ async function downloadPost(e) {
         link.download = `post_${document.getElementById('postName').innerText.toLowerCase().replace(/\s+/g, '_')}.png`;
         link.href = image;
         link.click();
-        
+
         showToast('✅ Imagen generada y descargada');
     } catch (err) {
         console.error(err);
@@ -1184,16 +1184,16 @@ let currentVeProductId = null;
 function openVisualExtrasModal(productId) {
     currentVeProductId = productId;
     const p = products.find(x => String(x.id) === String(productId));
-    
+
     document.getElementById('veProductId').value = productId;
     document.getElementById('veName').value = '';
     document.getElementById('vePrice').value = '0';
     document.getElementById('veImage').value = '';
-    
+
     if (document.getElementById('veLimit')) {
-       document.getElementById('veLimit').value = p?.accompaniments_limit || '';
+        document.getElementById('veLimit').value = p?.accompaniments_limit || '';
     }
-    
+
     document.getElementById('visualExtrasModal').style.display = 'flex';
     loadVisualExtras(productId);
 }
@@ -1206,21 +1206,21 @@ function closeVisualExtrasModal() {
 async function loadVisualExtras(productId) {
     const list = document.getElementById('veList');
     list.innerHTML = '<p class="text-sm text-gray-400 italic">Cargando extras...</p>';
-    
+
     try {
         const { data, error } = await supabaseClient
             .from('product_extras')
             .select('*')
             .eq('product_id', productId)
             .order('created_at', { ascending: false });
-            
+
         if (error) throw error;
-        
+
         if (!data || data.length === 0) {
             list.innerHTML = '<p class="text-sm text-gray-400 italic">No hay extras visuales para este producto. Agrega uno nuevo.</p>';
             return;
         }
-        
+
         list.innerHTML = data.map(extra => `
             <div class="flex items-center justify-between p-3 bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="flex items-center gap-3">
@@ -1244,19 +1244,19 @@ async function saveVisualExtra() {
     const name = document.getElementById('veName').value.trim();
     const price = parseFloat(document.getElementById('vePrice').value) || 0;
     const file = document.getElementById('veImage').files[0];
-    
+
     if (!name) return showToast('⚠️ Ingresa el nombre del extra', 'error');
-    
+
     const btn = document.getElementById('btnSaveVisualExtra');
     const originalText = btn.innerHTML;
     btn.innerHTML = '⏳ Guardando...';
     btn.disabled = true;
-    
+
     let image_url = null;
     if (file) {
         image_url = await uploadImage(file);
     }
-    
+
     try {
         const { error } = await supabaseClient.from('product_extras').insert([{
             business_id: businessId,
@@ -1265,9 +1265,9 @@ async function saveVisualExtra() {
             price: price,
             image_url: image_url
         }]);
-        
+
         if (error) throw error;
-        
+
         showToast('✅ Extra guardado correctamente');
         document.getElementById('veName').value = '';
         document.getElementById('vePrice').value = '0';
@@ -1284,11 +1284,11 @@ async function saveVisualExtra() {
 
 async function deleteVisualExtra(extraId) {
     if (!confirm('¿Eliminar este extra?')) return;
-    
+
     try {
         const { error } = await supabaseClient.from('product_extras').delete().eq('id', extraId);
         if (error) throw error;
-        
+
         showToast('🗑️ Extra eliminado');
         if (currentVeProductId) loadVisualExtras(currentVeProductId);
     } catch (err) {
@@ -1299,18 +1299,18 @@ async function deleteVisualExtra(extraId) {
 async function saveVisualExtrasLimit() {
     const limitVal = document.getElementById('veLimit').value;
     const limit = limitVal ? parseInt(limitVal) : null;
-    
+
     try {
         const { error } = await supabaseClient.from('products').update({
             accompaniments_limit: limit
         }).eq('id', currentVeProductId);
-        
+
         if (error) throw error;
-        
+
         // Actualizar array local
         const p = products.find(x => String(x.id) === String(currentVeProductId));
         if (p) p.accompaniments_limit = limit;
-        
+
         showToast('✅ Límite actualizado exitosamente');
     } catch (err) {
         console.error(err);
@@ -1323,21 +1323,21 @@ async function saveVisualExtrasLimit() {
 // ==========================================
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const btn = document.getElementById('btnInstallApp');
-  if(btn) {
-    btn.classList.remove('hidden');
-    btn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('App instalada');
-      }
-      deferredPrompt = null;
-      btn.classList.add('hidden');
-    });
-  }
+    e.preventDefault();
+    deferredPrompt = e;
+    const btn = document.getElementById('btnInstallApp');
+    if (btn) {
+        btn.classList.remove('hidden');
+        btn.addEventListener('click', async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                console.log('App instalada');
+            }
+            deferredPrompt = null;
+            btn.classList.add('hidden');
+        });
+    }
 });
 
