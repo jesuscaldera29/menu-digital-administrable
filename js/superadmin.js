@@ -126,7 +126,10 @@ function renderBusinesses() {
           </a>
         </td>
         <td>
-          <div class="text-gray-300 text-sm">📱 ${b.whatsapp || 'Sin registrar'}</div>
+          <div class="text-gray-300 text-sm mb-1">📱 Local: ${b.whatsapp || 'Sin registrar'}</div>
+          <div class="text-gray-400 text-xs mt-1">📞 Admin: ${b.admin_phone || 'N/A'}</div>
+          <div class="text-gray-400 text-xs">📧 ${b.admin_email || 'N/A'}</div>
+          <div class="text-gray-400 text-xs">🔑 ${b.admin_password || 'N/A'}</div>
         </td>
         <td>
           <div class="flex gap-3 text-xs">
@@ -230,6 +233,7 @@ async function handleCreateClient(e) {
   const slug = document.getElementById('newBizSlug').value.trim();
   const email = document.getElementById('newBizEmail').value.trim();
   const password = document.getElementById('newBizPassword').value;
+  const phone = document.getElementById('newBizPhone').value.trim();
   const btn = document.getElementById('btnCreateClient');
 
   btn.disabled = true;
@@ -251,7 +255,10 @@ async function handleCreateClient(e) {
     const { data: bizId, error: bizError } = await supabaseClient.rpc('create_business_with_settings', {
       p_owner_id: userId,
       p_slug: slug,
-      p_business_name: bizName
+      p_business_name: bizName,
+      p_admin_email: email,
+      p_admin_password: password,
+      p_admin_phone: phone
     });
 
     if (bizError) throw bizError;
