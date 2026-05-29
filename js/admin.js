@@ -1181,27 +1181,32 @@ async function logout() { await supabaseClient.auth.signOut(); window.location.h
 // ==========================================
 let currentVeProductId = null;
 
-function openVisualExtrasModal(productId) {
-    currentVeProductId = productId;
-    const p = products.find(x => String(x.id) === String(productId));
+window.openVisualExtrasModal = function(productId) {
+    try {
+        currentVeProductId = productId;
+        const p = products.find(x => String(x.id) === String(productId));
 
-    const modal = document.getElementById('visualExtrasModal');
-    if (!modal) {
-        alert('⚠️ Por favor actualiza la página recargando la caché (Ctrl + F5 o borrando datos de navegación) para poder usar el Gestor de Opciones.');
-        return;
+        const modal = document.getElementById('visualExtrasModal');
+        if (!modal) {
+            alert('⚠️ ERROR CRÍTICO: El formulario (modal) no existe en la página. Esto ocurre porque tu navegador está usando una versión antigua guardada en la memoria caché.\n\nSOLUCIÓN: Limpia el historial/datos de navegación o presiona Ctrl + F5.');
+            return;
+        }
+
+        if (document.getElementById('veProductId')) document.getElementById('veProductId').value = productId;
+        if (document.getElementById('veName')) document.getElementById('veName').value = '';
+        if (document.getElementById('vePrice')) document.getElementById('vePrice').value = '0';
+        if (document.getElementById('veImage')) document.getElementById('veImage').value = '';
+
+        if (document.getElementById('veLimit')) {
+            document.getElementById('veLimit').value = p && p.accompaniments_limit ? p.accompaniments_limit : '';
+        }
+
+        modal.style.display = 'flex';
+        loadVisualExtras(productId);
+    } catch(err) {
+        alert("Error JS: " + err.message);
+        console.error(err);
     }
-
-    if (document.getElementById('veProductId')) document.getElementById('veProductId').value = productId;
-    if (document.getElementById('veName')) document.getElementById('veName').value = '';
-    if (document.getElementById('vePrice')) document.getElementById('vePrice').value = '0';
-    if (document.getElementById('veImage')) document.getElementById('veImage').value = '';
-
-    if (document.getElementById('veLimit')) {
-        document.getElementById('veLimit').value = p?.accompaniments_limit || '';
-    }
-
-    modal.style.display = 'flex';
-    loadVisualExtras(productId);
 }
 
 function closeVisualExtrasModal() {
