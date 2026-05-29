@@ -1183,10 +1183,17 @@ let currentVeProductId = null;
 
 function openVisualExtrasModal(productId) {
     currentVeProductId = productId;
+    const p = products.find(x => String(x.id) === String(productId));
+    
     document.getElementById('veProductId').value = productId;
     document.getElementById('veName').value = '';
     document.getElementById('vePrice').value = '0';
     document.getElementById('veImage').value = '';
+    
+    if (document.getElementById('veLimit')) {
+       document.getElementById('veLimit').value = p?.accompaniments_limit || '';
+    }
+    
     document.getElementById('visualExtrasModal').style.display = 'flex';
     loadVisualExtras(productId);
 }
@@ -1286,6 +1293,28 @@ async function deleteVisualExtra(extraId) {
         if (currentVeProductId) loadVisualExtras(currentVeProductId);
     } catch (err) {
         showToast('Error: ' + err.message, 'error');
+    }
+}
+
+async function saveVisualExtrasLimit() {
+    const limitVal = document.getElementById('veLimit').value;
+    const limit = limitVal ? parseInt(limitVal) : null;
+    
+    try {
+        const { error } = await supabaseClient.from('products').update({
+            accompaniments_limit: limit
+        }).eq('id', currentVeProductId);
+        
+        if (error) throw error;
+        
+        // Actualizar array local
+        const p = products.find(x => String(x.id) === String(currentVeProductId));
+        if (p) p.accompaniments_limit = limit;
+        
+        showToast('✅ Límite actualizado exitosamente');
+    } catch (err) {
+        console.error(err);
+        showToast('❌ Error al actualizar el límite', 'error');
     }
 }
 

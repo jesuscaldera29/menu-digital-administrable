@@ -585,8 +585,17 @@
         
         <!-- Lista de Extras Creados -->
         <div>
+          <div class="mb-6 bg-orange-50 p-4 rounded-xl border border-orange-100 flex items-center gap-4">
+            <div class="flex-1">
+               <label class="text-xs font-bold text-orange-800 uppercase tracking-widest">Límite de Selección</label>
+               <p class="text-xs text-orange-600 mt-1">¿Cuántos extras puede elegir máximo?</p>
+            </div>
+            <input type="number" id="veLimit" class="input !mt-0 !w-24 text-center !py-2" placeholder="Ilimitado" min="1">
+            <button onclick="saveVisualExtrasLimit()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-lg text-sm active:scale-95 transition-all shadow-sm">Guardar</button>
+          </div>
+
           <h3 class="font-bold text-lg mb-4">Extras de este Producto</h3>
-          <div id="veList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scroll">
+          <div id="veList" class="space-y-3 max-h-[250px] overflow-y-auto pr-2 custom-scroll">
             <p class="text-sm text-gray-400 italic">Cargando extras...</p>
           </div>
         </div>
